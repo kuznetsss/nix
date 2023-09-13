@@ -6,10 +6,11 @@
 
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
-  nix.package = pkgs.nix;
 
-  # Necessary for using flakes on this system.
+  nix.package = pkgs.nix;
   nix.settings.experimental-features = "nix-command flakes";
+  nix.gc.automatic = true;
+  nix.gc.interval = { Days = 3; };
 
   programs.zsh = {
     enable = true; # default shell on catalina
@@ -79,12 +80,10 @@
     '';
   };
 
-
   security.pam.enableSudoTouchIdAuth = true;
 
   # Set Git commit hash for darwin-version.
   # system.configurationRevision = self.rev or self.dirtyRev or null;
-
 
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog
