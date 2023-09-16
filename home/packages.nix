@@ -17,6 +17,7 @@
     luajitPackages.luacheck
     ripgrep
     lazygit
+    nodejs # for github copilot
 
 
     # rust
