@@ -5,33 +5,42 @@
   programs.home-manager.enable = true;
 
   home.packages = with pkgs; [
-    rust-analyzer
-    yamllint
-    go
-    lua-language-server
-    rustfmt
-    darwin.trash
     neovim
+
+    # development
     zk
-    bitwarden-cli
-    lazygit
-    luajitPackages.luacheck
-    nethack
+    yamllint
+    yaml-language-server
+    lua-language-server
     black
-    nmap
-    htop
-    ranger
     stylua
-    syncthing
-    wget
-    darwin.iproute2mac
-    openssh
+    luajitPackages.luacheck
     ripgrep
-    python311Packages.ipython
+    lazygit
+
+
+    # rust
+    rust-analyzer
+    rustfmt
     rustc
     cargo
+
+    go
+
+    # system
+    darwin.iproute2mac
+    darwin.trash
+    bitwarden-cli
+    htop
+    nmap
+    wget
+    openssh
     tmux
-    yaml-language-server
+
+    python311Packages.ipython
+    syncthing
+    ranger
+    nethack
   ];
 }
 

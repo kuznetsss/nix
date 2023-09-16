@@ -1,16 +1,11 @@
 { pkgs, ... }: {
-  environment.systemPackages = with pkgs;
-    [
-      neovim
-    ];
-
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
 
   nix.package = pkgs.nix;
   nix.settings.experimental-features = "nix-command flakes";
   nix.gc.automatic = true;
-  nix.gc.interval = { Days = 3; };
+  nix.gc.interval = { Day = 3; };
 
   programs.zsh = {
     enable = true; # default shell on catalina

@@ -15,37 +15,20 @@
       callPackage = pkgs.callPackage;
     in
     {
-      darwinConfigurations."Sergeys-Laptop" = nix-darwin.lib.darwinSystem {
+      darwinConfigurations.hl = nix-darwin.lib.darwinSystem {
         modules = [
-          ./darwin.nix
-          # home-manager.darwinModules.home-manager
-          # {
-          #   home-manager.useGlobalPkgs = true;
-          #   home-manager.useUserPackages = true;
-          #   users.users.sergey = {
-          #     name = "sergey";
-          #     home = "/Users/sergey";
-          #   };
-          #   home-manager.users.sergey = import ./home.nix;
-          # }
+          ./darwin/base.nix
         ];
       };
 
       # Expose the package set, including overlays, for convenience.
       # darwinPackages = self.darwinConfigurations."Sergeys-Laptop".pkgs;
 
-      homeConfigurations."sergey" = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations.h = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
-        # home-manager.useGlobalPkgs = true;
-        # home-manager.useUserPackages = true;
-        # Specify your home configuration modules here, for example,
-        # the path to your home.nix.
         modules = [
-            ./home.nix
+          ./home.nix
         ];
-
-        # Optionally use extraSpecialArgs
-        # to pass through arguments to home.nix
       };
 
       formatter.aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.nixpkgs-fmt;
