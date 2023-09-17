@@ -37,6 +37,7 @@
     wget
     openssh
     tmux
+    eza
 
     python311Packages.ipython
     syncthing
