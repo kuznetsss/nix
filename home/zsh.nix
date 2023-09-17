@@ -26,8 +26,8 @@
       KEYTIMEOUT = 1;
     };
     shellAliases = {
-      ls = "ls --color=auto";
-      ll = "ls -l";
+      ls = "eza";
+      ll = "eza -la";
     };
     initExtraFirst = ''
       [[ ! $(command -v nix) && -e "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]] && source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
