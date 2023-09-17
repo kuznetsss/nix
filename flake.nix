@@ -21,12 +21,15 @@
         ];
       };
 
-      # Expose the package set, including overlays, for convenience.
-      # darwinPackages = self.darwinConfigurations."Sergeys-Laptop".pkgs;
-
       homeConfigurations.h = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
         modules = [
+          {
+            home.username = "sergey";
+            home.homeDirectory = /Users/sergey;
+            home.stateVersion = "23.05";
+            programs.home-manager.enable = true;
+          }
           ./home/packages.nix
           ./home/zsh.nix
         ];
