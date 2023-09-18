@@ -30,11 +30,26 @@
             home.stateVersion = "23.05";
             programs.home-manager.enable = true;
           }
-          ./home/packages.nix
           ./home/zsh.nix
+          ./home/packages.nix
+          ./home/h/packages.nix
         ];
       };
 
+      homeConfigurations.w = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [
+          {
+            home.username = "skuznetsov";
+            home.homeDirectory = /Users/skuznetsov;
+            home.stateVersion = "23.05";
+            programs.home-manager.enable = true;
+          }
+          ./home/zsh.nix
+          ./home/packages.nix
+          ./home/w/packages.nix
+        ];
+      };
       formatter.aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.nixpkgs-fmt;
     };
 }

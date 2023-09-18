@@ -14,6 +14,9 @@
     lazygit
     nodejs # for github copilot
 
+    # nix
+    nixd
+    statix
 
     # rust
     rust-analyzer
@@ -35,7 +38,6 @@
     eza
 
     python311Packages.ipython
-    syncthing
     ranger
     nethack
   ];
