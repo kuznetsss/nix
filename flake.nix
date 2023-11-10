@@ -15,7 +15,7 @@
       callPackage = pkgs.callPackage;
     in
     {
-      darwinConfigurations.hl = nix-darwin.lib.darwinSystem {
+      darwinConfigurations.h = nix-darwin.lib.darwinSystem {
         modules = [
           ./darwin/base.nix
         ];
@@ -31,6 +31,7 @@
             programs.home-manager.enable = true;
           }
           ./home/zsh.nix
+          ./home/tmux.nix
           ./home/packages.nix
           ./home/h/packages.nix
         ];
@@ -46,6 +47,7 @@
             programs.home-manager.enable = true;
           }
           ./home/zsh.nix
+          ./home/tmux.nix
           ./home/packages.nix
           ./home/w/packages.nix
         ];
