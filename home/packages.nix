@@ -29,7 +29,6 @@
     # system
     darwin.iproute2mac
     darwin.trash
-    bitwarden-cli
     htop
     nmap
     wget
