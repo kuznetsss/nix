@@ -16,6 +16,9 @@
     shell = "${pkgs.zsh}/bin/zsh";
     terminal = "tmux-256color";
     extraConfig = ''
+      # fix unwanted PATH update
+      set -g default-command ${pkgs.zsh}/bin/zsh
+
       # allow true colors
       set -as terminal-overrides ",*:Tc"
 
@@ -29,6 +32,13 @@
       set -g history-file ~/.cache/.tmux_history
 
       bind-key C-b select-pane -t :.+
+
+      # bindings for vi mode
+      bind P paste-buffer
+      bind-key -T copy-mode-vi v send-keys -X begin-selection
+      bind-key -T copy-mode-vi y send-keys -X copy-selection
+      bind-key -T copy-mode-vi r send-keys -X rectangle-toggle
+      bind v copy-mode
 
       set -g update-environment -r
 
