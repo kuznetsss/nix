@@ -17,6 +17,7 @@
     # nix
     nixd
     statix
+    nvd
 
     # rust
     rust-analyzer
