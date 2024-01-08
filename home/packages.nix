@@ -3,6 +3,7 @@
     neovim
 
     # development
+    nodePackages.cspell
     zk
     yamllint
     yaml-language-server

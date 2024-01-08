@@ -21,6 +21,7 @@
 
       # allow true colors
       set -as terminal-overrides ",*:Tc"
+      set -g default-terminal 'alacritty'
 
       # don't rename windows automatically
       set-option -g allow-rename off
