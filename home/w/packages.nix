@@ -1,7 +1,7 @@
 { pkgs, ... }: {
   home.packages = with pkgs; [
-    llvmPackages_14.libcxxClang
-    clang-tools_16
+    clang-tools_17
+    gcovr
     cmake-language-server
     cmake
     ninja
@@ -19,6 +19,7 @@
 
     gh
     jq
+    tree
 
     gnupg
   ];
