@@ -21,7 +21,11 @@
 
       # allow true colors
       set -as terminal-overrides ",*:Tc"
+
+      # undercurl support
       set -g default-terminal 'alacritty'
+      set -as terminal-overrides ',*:Smulx=\E[4::%p1%dm'
+      set -as terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'
 
       # don't rename windows automatically
       set-option -g allow-rename off
