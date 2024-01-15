@@ -30,6 +30,9 @@
       ll = "eza -la";
       rm = "trash";
     };
+    history = {
+      ignoreAllDups = true;
+    };
     initExtraFirst = ''
       [[ ! $(command -v nix) && -e "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]] && source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
     '';
@@ -45,7 +48,6 @@
       bindkey -v '^v' edit-command-line
       bindkey -M vicmd '^v' edit-command-line
       source ~/.zshrc_local
-
     '';
   };
   programs.starship.enable = true;
