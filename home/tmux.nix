@@ -27,6 +27,10 @@
       set -as terminal-overrides ',*:Smulx=\E[4::%p1%dm'
       set -as terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'
 
+      # extended keys (like Ctrl-Enter) support
+      set -s extended-keys on
+      set -as terminal-features ',*:extkeys'
+
       # don't rename windows automatically
       set-option -g allow-rename off
 

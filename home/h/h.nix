@@ -8,8 +8,8 @@ home-manager.lib.homeManagerConfiguration {
       home.stateVersion = "23.11";
       programs.home-manager.enable = true;
     }
-    ./../zsh.nix
     ./../tmux.nix
+    ./../zsh.nix
     ./../packages.nix
     ./packages.nix
   ];

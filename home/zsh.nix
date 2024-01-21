@@ -22,6 +22,7 @@
       }
     ];
     sessionVariables = {
+      TERM = "alacritty";
       EDITOR = "nvim";
       KEYTIMEOUT = 1;
     };
@@ -50,16 +51,19 @@
       source ~/.zshrc_local
     '';
   };
-  programs.starship.enable = true;
-  programs.starship.enableZshIntegration = true;
-  programs.starship.settings = {
-    character = {
-      success_symbol = "[➜](bold green)";
-      error_symbol = "[✖ ➜](bold red)";
-      vimcmd_symbol = "[](bold green)";
-    };
-    directory = {
-      truncate_to_repo = false;
+
+  programs.starship = {
+    enable = true;
+    enableZshIntegration = true;
+    settings = {
+      character = {
+        success_symbol = "[➜](bold green)";
+        error_symbol = "[✖ ➜](bold red)";
+        vimcmd_symbol = "[](bold green)";
+      };
+      directory = {
+        truncate_to_repo = false;
+      };
     };
   };
 
