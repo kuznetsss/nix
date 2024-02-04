@@ -17,10 +17,8 @@
     python311Packages.python-lsp-black
     python311Packages.matplotlib
 
-    gh
     jq
     tree
 
-    gnupg
   ];
 }

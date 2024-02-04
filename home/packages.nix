@@ -14,6 +14,8 @@
     ripgrep
     lazygit
     nodejs # for github copilot
+    gh
+    gnupg
 
     # nix
     nixd

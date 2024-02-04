@@ -1,7 +1,7 @@
 { ... }: {
   programs.wezterm = {
     enable = true; # use from brew instead
-    enableZshIntegration = true;
+    enableZshIntegration = false;
     extraConfig = ''
       local wezterm = require 'wezterm'
       return {
@@ -42,13 +42,13 @@
           saturation = 1.0,
           brightness = 1.0,
         },
+        force_reverse_video_cursor = true,
         window_padding = {
           left = 2,
           right = 0,
           top = 0,
           bottom = 0,
         },
-        underline_thickness = '200%',
       }
 
     '';

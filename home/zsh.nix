@@ -22,7 +22,6 @@
       }
     ];
     sessionVariables = {
-      TERM = "alacritty";
       EDITOR = "nvim";
       KEYTIMEOUT = 1;
     };

@@ -9,6 +9,7 @@ home-manager.lib.homeManagerConfiguration {
       programs.home-manager.enable = true;
     }
     ./../tmux.nix
+    ./../wezterm.nix
     ./../zsh.nix
     ./../packages.nix
     ./packages.nix
