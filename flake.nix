@@ -12,12 +12,17 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     flake-utils.url = "github:numtide/flake-utils";
+
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
   outputs = { self, nix-darwin, nixpkgs, nixpkgs-stable, home-manager, ... }@inputs:
     inputs.flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-darwin" ] (system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [ inputs.neovim-nightly-overlay.overlay ];
+        };
         callPackage = pkgs.callPackage;
       in
       {

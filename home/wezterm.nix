@@ -43,10 +43,11 @@
           brightness = 1.0,
         },
         force_reverse_video_cursor = true,
+        native_macos_fullscreen_mode = true,
         window_padding = {
           left = 2,
           right = 0,
-          top = 0,
+          top = 2,
           bottom = 0,
         },
       }

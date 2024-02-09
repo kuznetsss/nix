@@ -39,6 +39,9 @@
     openssh
     tmux
     eza
+    gnused
+    coreutils
+    unixtools.watch
 
     python311Packages.ipython
     ranger
