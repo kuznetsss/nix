@@ -40,8 +40,8 @@
     tmux
     eza
     gnused
-    coreutils
     unixtools.watch
+    coreutils-full
 
     python311Packages.ipython
     ranger
