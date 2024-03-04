@@ -5,5 +5,8 @@
 
     cmake
     ninja
+    git-agecrypt
+
+    deploy-rs
   ];
 }

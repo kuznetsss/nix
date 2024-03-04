@@ -8,9 +8,8 @@
     yamllint
     yaml-language-server
     lua-language-server
-    black
+    selene
     stylua
-    luajitPackages.luacheck
     ripgrep
     lazygit
     nodejs # for github copilot
@@ -21,6 +20,8 @@
     nixd
     statix
     nvd
+    age
+    sops
 
     # rust
     rust-analyzer

@@ -1,0 +1,10 @@
+keys:
+  - &home age1cpjpp0shhsm2sstch8rs9y8fz3r9tll7spngaqqylyh4uwfkqyds5vsdme
+  - &ivan age1ryfkrdck6k0pfwrxavwgh46y9cq047v9mzzkpfsmlvp8x9h9tglsydl7hv
+
+creation_rules:
+  - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+    - age:
+        - *home
+        - *ivan

@@ -1,4 +1,8 @@
-{ home-manager, pkgs, ... }:
+{ home-manager, nixpkgs, util, overlays }:
+let
+  system = util.system.aarch64-darwin;
+  pkgs = import nixpkgs { inherit system overlays; };
+in
 home-manager.lib.homeManagerConfiguration {
   inherit pkgs;
   modules = [

@@ -1,5 +1,10 @@
-{ nix-darwin, pkgs, ... }:
+{ nix-darwin, nixpkgs, util }:
+let
+  system = util.system.aarch64-darwin;
+  pkgs = nixpkgs.legacyPackages.${system};
+in
 nix-darwin.lib.darwinSystem {
+  inherit system;
   modules = [
     {
       # Auto upgrade nix package and the daemon service.

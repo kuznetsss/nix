@@ -1,4 +1,8 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: 
+let
+  stdenv = pkgs.stdenv;
+in
+{
   programs.zsh = {
     enable = true;
     enableAutosuggestions = true;
@@ -26,9 +30,7 @@
       KEYTIMEOUT = 1;
     };
     shellAliases = {
-      ls = "eza";
-      ll = "eza -la";
-      rm = "trash";
+       rm = lib.mkIf stdenv.isDarwin "trash";
     };
     history = {
       ignoreAllDups = true;
@@ -70,6 +72,12 @@
     enable = true;
     enableZshIntegration = true;
     options = [ "--cmd cd" ];
+  };
+
+  programs.eza = {
+    enable = true;
+    enableAliases = true;
+    icons = true;
   };
 
 }

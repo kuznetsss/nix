@@ -11,27 +11,40 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    flake-utils.url = "github:numtide/flake-utils";
+    home-manager-stable.url = "github:nix-community/home-manager/release-23.11";
+    home-manager-stable.inputs.nixpkgs.follows = "nixpkgs-stable";
 
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    deploy-rs.url = "github:serokell/deploy-rs";
+    sops-nix.url = "github:Mic92/sops-nix";
+    git-agecrypt.url = "github:kuznetsss/git-agecrypt";
   };
 
-  outputs = { self, nix-darwin, nixpkgs, nixpkgs-stable, home-manager, ... }@inputs:
-    inputs.flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-darwin" ] (system:
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [ inputs.neovim-nightly-overlay.overlay ];
-        };
-        callPackage = pkgs.callPackage;
-      in
-      {
-        packages.darwinConfigurations.h = callPackage ./darwin/base.nix { inherit nix-darwin; };
-        packages.homeConfigurations = {
-          h = callPackage ./home/h/h.nix { inherit home-manager; };
-          w = callPackage ./home/w/w.nix { inherit home-manager; };
-        };
-        formatter = pkgs.nixpkgs-fmt;
-      }
-    );
+  outputs = { self, nix-darwin, nixpkgs, nixpkgs-stable, home-manager, home-manager-stable, deploy-rs, sops-nix, ... }@inputs:
+    let
+      util = import ./util { inherit nixpkgs; };
+      overlays = [
+        # inputs.neovim-nightly-overlay.overlay
+        inputs.git-agecrypt.overlay
+      ];
+    in
+    {
+      darwinConfigurations.h = import ./darwin/base.nix { inherit nix-darwin nixpkgs util; };
+
+
+      homeConfigurations = {
+        h = import ./home/h/h.nix { inherit nixpkgs home-manager util overlays; };
+        w = import ./home/w/w.nix { inherit nixpkgs home-manager util; };
+      };
+
+      nixosConfigurations.ivan = import ./hosts/ivan { inherit nixpkgs-stable home-manager-stable sops-nix util; };
+
+      deploy.nodes.ivan = import ./hosts/ivan/deploy.nix { inherit self deploy-rs; };
+
+      # TODO: uncomment when remote testing will be available in deploy-rs
+      # see https://github.com/serokell/deploy-rs/issues/167
+      # checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) inputs.deploy-rs.lib;
+
+      formatter = util.forEachSystem (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
+    };
 }
