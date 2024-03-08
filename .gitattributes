@@ -1,1 +1,1 @@
-# hosts/ivan/network.nix filter=git-agecrypt diff=git-agecrypt
+hosts/ivan/network.nix filter=git-agecrypt diff=git-agecrypt
