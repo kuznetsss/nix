@@ -11,10 +11,4 @@ rec {
   forEachSystem = func:
     lib.genAttrs (lib.attrValues system)
       (system: func system);
-
-  readFileOpt = filepath:
-    if builtins.pathExists filepath && builtins.readFileType == "regular" then
-      builtins.readFile filepath
-    else
-      builtins.trace "No such file: ${filepath}" "";
 }

@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }: 
+{ pkgs, lib, ... }:
 let
   stdenv = pkgs.stdenv;
 in
@@ -30,7 +30,7 @@ in
       KEYTIMEOUT = 1;
     };
     shellAliases = {
-       rm = lib.mkIf stdenv.isDarwin "trash";
+      rm = lib.mkIf stdenv.isDarwin "trash";
     };
     history = {
       ignoreAllDups = true;

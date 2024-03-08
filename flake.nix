@@ -37,7 +37,7 @@
         w = import ./home/w/w.nix { inherit nixpkgs home-manager util; };
       };
 
-      nixosConfigurations.ivan = import ./hosts/ivan { inherit nixpkgs-stable home-manager-stable sops-nix util; };
+      nixosConfigurations.ivan = import ./hosts/ivan { inherit nixpkgs-stable home-manager-stable sops-nix; };
 
       deploy.nodes.ivan = import ./hosts/ivan/deploy.nix { inherit self deploy-rs; };
 

@@ -1,9 +1,9 @@
-{ nixpkgs-stable, home-manager-stable, sops-nix, util }:
+{ nixpkgs-stable, home-manager-stable, sops-nix }:
 let
   home-manager = home-manager-stable;
 in
 nixpkgs-stable.lib.nixosSystem {
-  specialArgs = { inherit sops-nix util; };
+  specialArgs = { inherit sops-nix; };
   modules = [
     ./sops.nix
     ./configuration.nix

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, util, ... }:
+{ config, lib, pkgs, ... }:
 let
   network_config = import ./network.nix;
 in
