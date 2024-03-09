@@ -7,6 +7,7 @@ nixpkgs-stable.lib.nixosSystem {
   modules = [
     ./sops.nix
     ./configuration.nix
+    ./wireguard.nix
     home-manager.nixosModules.home-manager
     {
       home-manager.useGlobalPkgs = true;

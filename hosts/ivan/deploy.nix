@@ -1,6 +1,6 @@
 { deploy-rs, self }:
 {
-  hostname = "ivan";
+  hostname = "direct_ivan";
   remoteBuild = true;
   magicRollback = true;
   interactiveSudo = true;

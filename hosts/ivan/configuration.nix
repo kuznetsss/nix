@@ -28,6 +28,7 @@ in
     nameservers = [ "1.1.1.1" "8.8.8.8" ];
     firewall = {
       enable = true;
+      logRefusedConnections = false;
       allowPing = true;
     };
   };
@@ -47,6 +48,13 @@ in
     shell = pkgs.zsh;
   };
 
+  nix = {
+    settings.experimental-features = [ "nix-command" "flakes" ];
+    gc = {
+      automatic = true;
+      dates = "weekly";
+    };
+  };
   environment.systemPackages = with pkgs; [
     neovim
     htop
