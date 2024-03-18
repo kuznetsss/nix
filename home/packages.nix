@@ -16,8 +16,10 @@
     gh
     gnupg
 
-    # nix
-    nixd
+    chatgpt-cli
+
+    nix
+    # nixd
     statix
     nvd
     age
