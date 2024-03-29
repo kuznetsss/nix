@@ -17,7 +17,6 @@
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     deploy-rs.url = "github:serokell/deploy-rs";
     sops-nix.url = "github:Mic92/sops-nix";
-    git-agecrypt.url = "github:kuznetsss/git-agecrypt";
   };
 
   outputs = { self, nix-darwin, nixpkgs, nixpkgs-stable, home-manager, home-manager-stable, deploy-rs, sops-nix, ... }@inputs:
@@ -25,7 +24,6 @@
       util = import ./util { inherit nixpkgs; };
       overlays = [
         # inputs.neovim-nightly-overlay.overlay
-        inputs.git-agecrypt.overlay
       ];
     in
     {

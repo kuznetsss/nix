@@ -19,7 +19,7 @@
     chatgpt-cli
 
     nix
-    # nixd
+    nixd
     statix
     nvd
     age
