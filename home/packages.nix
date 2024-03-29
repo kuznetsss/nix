@@ -30,6 +30,7 @@
     rustfmt
     rustc
     cargo
+    clippy
 
     go
 
@@ -41,7 +42,6 @@
     wget
     openssh
     tmux
-    eza
     gnused
     unixtools.watch
     coreutils-full
