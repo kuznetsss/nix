@@ -1,7 +1,7 @@
 { pkgs, lib, ... }:
 let
   stdenv = pkgs.stdenv;
-  isUnstable = lib.strings.hasPrefix "24.05" lib.version;
+  isUnstable = lib.strings.hasPrefix "24.11" lib.version;
 in
 {
   programs.zsh = (if isUnstable then
@@ -18,7 +18,7 @@ in
       {
         name = "history-search-multi-word";
         file = "history-search-multi-word.plugin.zsh";
-        src = pkgs.fetchFromGitHub {
+        src = fetchFromGitHub {
           owner = "zdharma-continuum";
           repo = "history-search-multi-word";
           rev = "c4dcddc1cd17e7e0909471703f3526170db0f475";

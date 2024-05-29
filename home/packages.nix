@@ -25,13 +25,6 @@
     age
     sops
 
-    # rust
-    rust-analyzer
-    rustfmt
-    rustc
-    cargo
-    clippy
-
     go
 
     # system
