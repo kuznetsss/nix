@@ -1,6 +1,6 @@
 { home-manager, nixpkgs, util }:
 let
-  system = util.system.aaarch64-darwin;
+  system = util.system.aarch64-darwin;
   pkgs = nixpkgs.legacyPackages.${system};
 in
 home-manager.lib.homeManagerConfiguration {

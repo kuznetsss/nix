@@ -1,12 +1,17 @@
 { pkgs, ... }: {
   home.packages = with pkgs; [
-    clang-tools_17
+    clang-tools_18
+    lldb_18
     gcovr
     cmake-language-server
     cmake
+    cmake-format
     ninja
-    lldb
     ccache
+    doxygen
+    git-lfs
+
+    netcat-gnu
 
     # python312Full
     # python311Packages.python-lsp-server

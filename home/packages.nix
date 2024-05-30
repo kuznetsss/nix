@@ -20,12 +20,16 @@
 
     nix
     nixd
+    # nix
+    # nixd
     statix
     nvd
     age
     sops
 
     go
+    gopls
+    golangci-lint
 
     # system
     darwin.iproute2mac
