@@ -1,6 +1,7 @@
-{ config, lib, pkgs, ... }:
+{ pkgs, ... }:
 let
   network_config = import ./network.nix;
+  ssh_port = 21587;
 in
 {
   imports =
@@ -30,6 +31,7 @@ in
       enable = true;
       logRefusedConnections = false;
       allowPing = true;
+      extraCommands = "iptables -A INPUT -i tailscale0 -p tcp -m tcp --dport ${toString ssh_port} -j ACCEPT";
     };
   };
 
@@ -69,7 +71,8 @@ in
       PasswordAuthentication = false;
       PermitRootLogin = "no";
     };
-    ports = [ 2587 ];
+    ports = [ ssh_port ];
+    openFirewall = false;
   };
 
   services.tailscale = {
@@ -77,6 +80,6 @@ in
     useRoutingFeatures = "server";
   };
 
-  system.stateVersion = "23.11";
+  system.stateVersion = "24.05";
 }
 
