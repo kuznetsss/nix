@@ -1,11 +1,10 @@
 { pkgs, lib, ... }:
 let
   stdenv = pkgs.stdenv;
-  isUnstable = lib.strings.hasPrefix "24.11" lib.version;
 in
 {
-  programs.zsh = (if isUnstable then
-    { autosuggestion.enable = true; } else { enableAutosuggestions = true; }) // {
+  programs.zsh = {
+    autosuggestion.enable = true;
     enable = true;
     enableCompletion = true;
     syntaxHighlighting.enable = true;
@@ -78,11 +77,6 @@ in
   programs.eza = {
     enable = true;
     icons = true;
-  } //
-  (if isUnstable then {
     enableZshIntegration = true;
-  } else {
-    enableAliases = true;
-  });
-
+  };
 }
