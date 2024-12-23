@@ -14,7 +14,7 @@ nixpkgs-stable.lib.nixosSystem {
       home-manager.useUserPackages = true;
       home-manager.users.sergey = { ... }:
         {
-          home.stateVersion = "24.05";
+          home.stateVersion = "24.11";
           imports = [
             ../../home/zsh.nix
           ];

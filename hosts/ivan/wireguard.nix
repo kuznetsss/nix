@@ -48,6 +48,11 @@ in
           publicKey = "dYDGAIAHB2YM4rCYJP8YyelEdcQlP07mAe7uUyXJHws=";
           allowedIPs = [ "10.0.30.8/32" ];
         }
+        {
+          # Alex
+          publicKey = "Y+NNha4lTlKlBYm3R+BTLfQGnqmQGVIOGvDBHIOhwmg=";
+          allowedIPs = [ "10.0.30.9/32" ];
+        }
       ];
     };
   };
