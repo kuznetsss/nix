@@ -1,7 +1,10 @@
 { pkgs, ... }: {
   home.packages = with pkgs; [
-    clang-tools_18
-    lldb_18
+    awscli2
+    ssm-session-manager-plugin
+
+    llvmPackages_19.clang-tools
+    lldb
     gcovr
     cmake-language-server
     cmake
@@ -10,6 +13,9 @@
     ccache
     doxygen
     git-lfs
+    git-cliff
+    k6
+    typescript-language-server
 
     netcat-gnu
 

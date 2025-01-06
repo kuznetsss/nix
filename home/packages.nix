@@ -20,8 +20,7 @@
 
     nix
     nixd
-    # nix
-    # nixd
+    nixfmt
     statix
     nvd
     age
