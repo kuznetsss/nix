@@ -49,7 +49,7 @@ in
       zle -N edit-command-line
       bindkey -v '^v' edit-command-line
       bindkey -M vicmd '^v' edit-command-line
-      source ~/.zshrc_local
+      [ -f ~/.zshrc_local ] && source ~/.zshrc_local
     '';
   };
 
