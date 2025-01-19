@@ -142,6 +142,10 @@
            action = wezterm.action.AdjustPaneSize { dir, 5 },
          })
       end
+      wezterm.on('window-focus-changed', function(window, pane)
+        local csi = window:is_focused() and '[I' or '[O'
+        pane:send_text(csi)
+      end)
 
       return {
         allow_square_glyphs_to_overflow_width = "Always",
