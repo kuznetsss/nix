@@ -142,6 +142,15 @@
            action = wezterm.action.AdjustPaneSize { dir, 5 },
          })
       end
+
+      for i = 1, 9 do
+        table.insert(keys, {
+          mods = 'LEADER',
+          key = tostring(i),
+          action = wezterm.action.ActivateTab(i-1),
+        })
+      end
+
       wezterm.on('window-focus-changed', function(window, pane)
         local csi = window:is_focused() and '[I' or '[O'
         pane:send_text(csi)
