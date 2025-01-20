@@ -1,6 +1,6 @@
 { pkgs, ... }: {
   home.packages = with pkgs; [
-    neovim
+    # neovim
     neovide
 
     # development
@@ -21,7 +21,7 @@
 
     nix
     nixd
-    nixfmt
+    nixfmt-classic
     statix
     nvd
     age
@@ -32,7 +32,7 @@
     golangci-lint
 
     # system
-    darwin.iproute2mac
+    iproute2mac
     darwin.trash
     htop
     nmap
