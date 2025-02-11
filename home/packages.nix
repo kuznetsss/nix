@@ -32,8 +32,6 @@
     golangci-lint
 
     # system
-    iproute2mac
-    darwin.trash
     htop
     nmap
     wget
@@ -43,9 +41,11 @@
     unixtools.watch
     coreutils-full
 
-    python311Packages.ipython
-    ranger
+    yazi
     nethack
-  ];
+  ] ++ (if pkgs.stdenv.isDarwin then [
+    iproute2mac
+    darwin.trash
+  ] else []);
 }
 
