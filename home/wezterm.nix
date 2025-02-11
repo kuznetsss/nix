@@ -158,6 +158,7 @@
 
       return {
         allow_square_glyphs_to_overflow_width = "Always",
+        audible_bell = "Disabled",
         color_scheme = 'Tomorrow (dark) (terminal.sexy)',
         colors = colors,
         default_gui_startup_args = { 'connect', 'unix' },

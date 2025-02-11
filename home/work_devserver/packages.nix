@@ -1,8 +1,5 @@
 { pkgs, ... }: {
   home.packages = with pkgs; [
-    awscli2
-    ssm-session-manager-plugin
-
     llvmPackages_19.clang-tools
     lldb
     gcovr

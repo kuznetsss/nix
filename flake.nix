@@ -19,7 +19,7 @@
     sops-nix.url = "github:Mic92/sops-nix";
   };
 
-  outputs = { self, nix-darwin, nixpkgs, nixpkgs-stable, home-manager, home-manager-stable, deploy-rs, sops-nix, ... }@inputs:
+  outputs = { self, nix-darwin, nixpkgs, nixpkgs-stable, home-manager, home-manager-stable, deploy-rs, sops-nix, ... }:
     let
       util = import ./util { inherit nixpkgs; };
       overlays = [
@@ -32,7 +32,8 @@
 
       homeConfigurations = {
         h = import ./home/h/h.nix { inherit nixpkgs home-manager util overlays; };
-        w = import ./home/w/w.nix { inherit nixpkgs home-manager util; };
+        w = import ./home/w { inherit nixpkgs home-manager util; };
+        work_devserver = import ./home/work_devserver { inherit nixpkgs home-manager util; };
       };
 
       nixosConfigurations.ivan = import ./hosts/ivan { inherit nixpkgs-stable home-manager-stable sops-nix; };
