@@ -11,6 +11,11 @@ home-manager.lib.homeManagerConfiguration {
       home.homeDirectory = /home/skuznetsov;
       home.stateVersion = "24.11";
       programs.home-manager.enable = true;
+
+      services.ssh-agent.enable = true;
+      programs.ssh.addKeysToAgent = "yes";
+      services.gpg-agent.enable = true;
+      services.gpg-agent.pinentryPackage = pkgs.pinentry-tty;
     }
     ./../tmux.nix
     ./../wezterm.nix
