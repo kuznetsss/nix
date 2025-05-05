@@ -13,5 +13,9 @@
     lldb_19
 
     deploy-rs
+
+    typst
+    tinymist
+    typstyle
   ];
 }

@@ -1,4 +1,4 @@
-{ ... }: {
+{ config, ... }: {
   programs.wezterm = {
     enable = true; # use from brew instead
     enableZshIntegration = false;
@@ -151,10 +151,10 @@
         })
       end
 
-      wezterm.on('window-focus-changed', function(window, pane)
-        local csi = window:is_focused() and '[I' or '[O'
-        pane:send_text(csi)
-      end)
+      -- wezterm.on('window-focus-changed', function(window, pane)
+      --   local csi = window:is_focused() and '[I' or '[O'
+      --   pane:send_text(csi)
+      -- end)
 
       return {
         allow_square_glyphs_to_overflow_width = "Always",
@@ -196,7 +196,12 @@
         font_size = 14.0,
         force_reverse_video_cursor = true,
         native_macos_fullscreen_mode = true,
+        set_environment_variables = {
+          TERMINFO_DIRS = '${config.home.homeDirectory}/.nix-profile/share/terminfo',
+        },
+        strikethrough_position = '0.5cell',
         tab_bar_at_bottom = true,
+        term = 'wezterm',
         window_padding = {
           left = 2,
           right = 0,

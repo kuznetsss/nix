@@ -1,7 +1,6 @@
 { pkgs, ... }: {
   home.packages = with pkgs; [
     neovim
-    neovide
 
     # development
     nodePackages.cspell
@@ -9,6 +8,7 @@
     yamllint
     yaml-language-server
     lua-language-server
+    imagemagick
     selene
     stylua
     ripgrep
@@ -40,6 +40,8 @@
     gnused
     unixtools.watch
     coreutils-full
+    websocat
+    yazi
 
     yazi
     nethack
