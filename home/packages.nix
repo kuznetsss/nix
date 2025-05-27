@@ -39,11 +39,10 @@
     tmux
     gnused
     unixtools.watch
-    coreutils-full
+    uutils-coreutils-noprefix
     websocat
     yazi
 
-    yazi
     nethack
   ] ++ (if pkgs.stdenv.isDarwin then [
     iproute2mac

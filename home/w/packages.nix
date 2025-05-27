@@ -27,6 +27,7 @@
     # python311Packages.pylsp-rope
     # python311Packages.python-lsp-black
     # python311Packages.matplotlib
+    pre-commit
 
     jq
     tree
