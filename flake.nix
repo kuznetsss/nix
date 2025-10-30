@@ -14,9 +14,9 @@
     home-manager-stable.url = "github:nix-community/home-manager/release-25.05";
     home-manager-stable.inputs.nixpkgs.follows = "nixpkgs-stable";
 
-    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     deploy-rs.url = "github:serokell/deploy-rs";
     sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = { self, nix-darwin, nixpkgs, nixpkgs-stable, home-manager, home-manager-stable, deploy-rs, sops-nix, ... }:
@@ -36,7 +36,7 @@
         work_devserver = import ./home/work_devserver { inherit nixpkgs home-manager util; };
       };
 
-      nixosConfigurations.ivan = import ./hosts/ivan { inherit nixpkgs-stable home-manager-stable sops-nix; };
+      nixosConfigurations.ivan = import ./hosts/ivan { inherit nixpkgs-stable home-manager-stable sops-nix; nixpkgs-unstable = nixpkgs; };
 
       deploy.nodes.ivan = import ./hosts/ivan/deploy.nix { inherit self deploy-rs; };
 

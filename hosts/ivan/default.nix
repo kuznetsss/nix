@@ -1,13 +1,15 @@
-{ nixpkgs-stable, home-manager-stable, sops-nix }:
+{ nixpkgs-stable, nixpkgs-unstable, home-manager-stable, sops-nix }:
 let
   home-manager = home-manager-stable;
 in
 nixpkgs-stable.lib.nixosSystem {
-  specialArgs = { inherit sops-nix; };
+  specialArgs = { inherit sops-nix nixpkgs-unstable; };
   modules = [
     ./sops.nix
     ./configuration.nix
     ./wireguard.nix
+    ./prosody.nix
+    ./logrotate.nix
     home-manager.nixosModules.home-manager
     {
       home-manager.useGlobalPkgs = true;
