@@ -13,6 +13,7 @@
     stylua
     ripgrep
     lazygit
+    lazyjj
     nodejs # for github copilot
     gh
     gnupg
