@@ -16,14 +16,23 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, home-manager-stable
-    , deploy-rs, sops-nix, ... }:
+  outputs =
+    { self
+    , nixpkgs
+    , nixpkgs-stable
+    , home-manager
+    , home-manager-stable
+    , deploy-rs
+    , sops-nix
+    , ...
+    }:
     let
       util = import ./util { inherit nixpkgs; };
       overlays = [
         # inputs.neovim-nightly-overlay.overlay
       ];
-    in {
+    in
+    {
       homeConfigurations = {
         h =
           import ./home/h/h.nix { inherit nixpkgs home-manager util overlays; };

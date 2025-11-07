@@ -2,7 +2,8 @@
 let
   network_config = import ./network.nix;
   ssh_port = 21587;
-in {
+in
+{
   imports = [ ./hardware-configuration.nix ];
 
   boot.loader.grub.enable = true;

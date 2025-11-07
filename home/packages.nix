@@ -48,6 +48,6 @@
   ] ++ (if pkgs.stdenv.isDarwin then [
     iproute2mac
     darwin.trash
-  ] else []);
+  ] else [ ]);
 }
 

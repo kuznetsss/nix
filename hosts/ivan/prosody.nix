@@ -2,7 +2,8 @@
 let
   network_config = import ./network.nix;
   domain = network_config.domain;
-in {
+in
+{
   users.users.prosody.extraGroups = [ "nginx" "turnserver" ];
 
   security.acme = {
