@@ -5,9 +5,6 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
 
-    nix-darwin.url = "github:LnL7/nix-darwin";
-    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -19,31 +16,35 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nix-darwin, nixpkgs, nixpkgs-stable, home-manager, home-manager-stable, deploy-rs, sops-nix, ... }:
+  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, home-manager-stable
+    , deploy-rs, sops-nix, ... }:
     let
       util = import ./util { inherit nixpkgs; };
       overlays = [
         # inputs.neovim-nightly-overlay.overlay
       ];
-    in
-    {
-      darwinConfigurations.h = import ./darwin/base.nix { inherit nix-darwin nixpkgs util; };
-
-
+    in {
       homeConfigurations = {
-        h = import ./home/h/h.nix { inherit nixpkgs home-manager util overlays; };
+        h =
+          import ./home/h/h.nix { inherit nixpkgs home-manager util overlays; };
         w = import ./home/w { inherit nixpkgs home-manager util; };
-        work_devserver = import ./home/work_devserver { inherit nixpkgs home-manager util; };
+        work_devserver =
+          import ./home/work_devserver { inherit nixpkgs home-manager util; };
       };
 
-      nixosConfigurations.ivan = import ./hosts/ivan { inherit nixpkgs-stable home-manager-stable sops-nix; nixpkgs-unstable = nixpkgs; };
+      nixosConfigurations.ivan = import ./hosts/ivan {
+        inherit nixpkgs-stable home-manager-stable sops-nix;
+        nixpkgs-unstable = nixpkgs;
+      };
 
-      deploy.nodes.ivan = import ./hosts/ivan/deploy.nix { inherit self deploy-rs; };
+      deploy.nodes.ivan =
+        import ./hosts/ivan/deploy.nix { inherit self deploy-rs; };
 
       # TODO: uncomment when remote testing will be available in deploy-rs
       # see https://github.com/serokell/deploy-rs/issues/167
       # checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) inputs.deploy-rs.lib;
 
-      formatter = util.forEachSystem (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
+      formatter = util.forEachSystem
+        (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
     };
 }
