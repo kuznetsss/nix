@@ -5,15 +5,29 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
 
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    home-manager-stable.url = "github:nix-community/home-manager/release-25.05";
-    home-manager-stable.inputs.nixpkgs.follows = "nixpkgs-stable";
+    home-manager-stable = {
+      url = "github:nix-community/home-manager/release-25.05";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
 
     deploy-rs.url = "github:serokell/deploy-rs";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    disko = {
+      url = "github:nix-community/disko/latest";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    private-part= {
+      url = "git+ssh://git@github.com/kuznetsss/nix_private.git";
+      flake = false;
+    };
   };
 
   outputs =
@@ -24,6 +38,8 @@
     , home-manager-stable
     , deploy-rs
     , sops-nix
+    , disko
+    , private-part
     , ...
     }:
     let
@@ -31,6 +47,7 @@
       overlays = [
         # inputs.neovim-nightly-overlay.overlay
       ];
+      private = import private-part;
     in
     {
       homeConfigurations = {
@@ -41,9 +58,16 @@
           import ./home/work_devserver { inherit nixpkgs home-manager util; };
       };
 
-      nixosConfigurations.ivan = import ./hosts/ivan {
-        inherit nixpkgs-stable home-manager-stable sops-nix;
-        nixpkgs-unstable = nixpkgs;
+      nixosConfigurations = {
+        ivan = import ./hosts/ivan {
+          inherit nixpkgs-stable home-manager-stable sops-nix;
+          nixpkgs-unstable = nixpkgs;
+        };
+        operator = import hosts/operator {
+          inherit private disko;
+          nixpkgs = nixpkgs-stable;
+          home-manager = home-manager-stable;
+        };
       };
 
       deploy.nodes.ivan =
