@@ -51,9 +51,9 @@
     in
     {
       homeConfigurations = {
-        h =
-          import ./home/h/h.nix { inherit nixpkgs home-manager util overlays; };
-        w = import ./home/w { inherit nixpkgs home-manager util; };
+        mac =
+          import ./home/mac { inherit nixpkgs home-manager util overlays; };
+        work_mac = import ./home/work_mac { inherit nixpkgs home-manager util; };
         work_devserver =
           import ./home/work_devserver { inherit nixpkgs home-manager util; };
       };
