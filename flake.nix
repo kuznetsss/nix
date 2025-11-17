@@ -24,7 +24,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    private-part= {
+    private-part = {
       url = "git+ssh://git@github.com/kuznetsss/nix_private.git";
       flake = false;
     };
@@ -44,25 +44,12 @@
     }:
     let
       util = import ./util { inherit nixpkgs; };
-      overlays = [
-        # inputs.neovim-nightly-overlay.overlay
-      ];
       private = import private-part;
     in
     {
-      homeConfigurations = import ./home {inherit nixpkgs home-manager util; };
+      homeConfigurations = import ./home { inherit nixpkgs home-manager util; };
 
-      nixosConfigurations = {
-        ivan = import ./hosts/ivan {
-          inherit nixpkgs-stable home-manager-stable sops-nix;
-          nixpkgs-unstable = nixpkgs;
-        };
-        operator = import hosts/operator {
-          inherit private disko;
-          nixpkgs = nixpkgs-stable;
-          home-manager = home-manager-stable;
-        };
-      };
+      nixosConfigurations = import ./nixos { nixpkgs = nixpkgs-stable; home-manager = home-manager-stable; inherit sops-nix private disko; };
 
       deploy.nodes.ivan =
         import ./hosts/ivan/deploy.nix { inherit self deploy-rs; };
