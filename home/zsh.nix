@@ -35,22 +35,25 @@ in
     history = {
       ignoreAllDups = true;
     };
-    initExtraFirst = ''
-      [[ ! $(command -v nix) && -e "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]] && source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
-    '';
-    initExtra = ''
-      export KEYTIMEOUT=1
-      bindkey -v
-      bindkey '^?' backward-delete-char
-      bindkey '^P' up-history
-      bindkey '^N' down-history
-      bindkey '^ ' autosuggest-accept
-      autoload edit-command-line
-      zle -N edit-command-line
-      bindkey -v '^v' edit-command-line
-      bindkey -M vicmd '^v' edit-command-line
-      [ -f ~/.zshrc_local ] && source ~/.zshrc_local
-    '';
+    initContent = let
+      before = lib.mkBefore
+      ''
+        [[ ! $(command -v nix) && -e "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]] && source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+      '';
+      after = lib.mkAfter
+      ''
+        export KEYTIMEOUT=1
+        bindkey -v
+        bindkey '^?' backward-delete-char
+        bindkey '^P' up-history
+        bindkey '^N' down-history
+        bindkey '^ ' autosuggest-accept
+        autoload edit-command-line
+        zle -N edit-command-line
+        bindkey -v '^v' edit-command-line
+        bindkey -M vicmd '^v' edit-command-line
+        [ -f ~/.zshrc_local ] && source ~/.zshrc_local
+      ''; in lib.mkMerge[ before after ];
   };
 
   programs.starship = {
