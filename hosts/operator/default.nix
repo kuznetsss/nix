@@ -12,7 +12,7 @@ nixpkgs.lib.nixosSystem {
         {
           home.stateVersion = "25.05";
           imports = [
-            ../../home/zsh.nix
+            ../../home/common/zsh.nix
           ];
         };
     }

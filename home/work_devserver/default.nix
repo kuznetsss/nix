@@ -17,10 +17,10 @@ home-manager.lib.homeManagerConfiguration {
       services.gpg-agent.enable = true;
       services.gpg-agent.pinentryPackage = pkgs.pinentry-tty;
     }
-    ./../tmux.nix
-    ./../wezterm.nix
-    ./../zsh.nix
-    ./../packages.nix
+    ./../common/tmux.nix
+    ./../common/wezterm.nix
+    ./../common/zsh.nix
+    ./../common/packages.nix
     ./packages.nix
   ];
 }

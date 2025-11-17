@@ -19,10 +19,10 @@ home-manager.lib.homeManagerConfiguration {
         };
       };
     }
-    ./../tmux.nix
-    ./../wezterm.nix
-    ./../zsh.nix
-    ./../packages.nix
+    ./../common/tmux.nix
+    ./../common/wezterm.nix
+    ./../common/zsh.nix
+    ./../common/packages.nix
     ./packages.nix
   ];
 }

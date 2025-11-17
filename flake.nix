@@ -50,13 +50,7 @@
       private = import private-part;
     in
     {
-      homeConfigurations = {
-        mac =
-          import ./home/mac { inherit nixpkgs home-manager util overlays; };
-        work_mac = import ./home/work_mac { inherit nixpkgs home-manager util; };
-        work_devserver =
-          import ./home/work_devserver { inherit nixpkgs home-manager util; };
-      };
+      homeConfigurations = import ./home {inherit nixpkgs home-manager util; };
 
       nixosConfigurations = {
         ivan = import ./hosts/ivan {

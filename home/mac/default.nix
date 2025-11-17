@@ -1,7 +1,7 @@
-{ home-manager, nixpkgs, util, overlays }:
+{ home-manager, nixpkgs, util }:
 let
   system = util.system.aarch64-darwin;
-  pkgs = import nixpkgs { inherit system overlays; };
+  pkgs = import nixpkgs { inherit system; };
 in
 home-manager.lib.homeManagerConfiguration {
   inherit pkgs;
@@ -12,10 +12,10 @@ home-manager.lib.homeManagerConfiguration {
       home.stateVersion = "25.05";
       programs.home-manager.enable = true;
     }
-    ./../tmux.nix
-    ./../wezterm.nix
-    ./../zsh.nix
-    ./../packages.nix
+    ./../common/tmux.nix
+    ./../common/wezterm.nix
+    ./../common/zsh.nix
+    ./../common/packages.nix
     ./packages.nix
   ];
 }
