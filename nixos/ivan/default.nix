@@ -1,6 +1,6 @@
-{ nixpkgs, home-manager, sops-nix }:
+{ nixpkgs, home-manager, sops-nix, private }:
 nixpkgs.lib.nixosSystem {
-  specialArgs = { inherit sops-nix; };
+  specialArgs = { inherit sops-nix private; };
   modules = [
     ./sops.nix
     ./configuration.nix

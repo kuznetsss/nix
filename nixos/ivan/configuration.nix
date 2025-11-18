@@ -1,6 +1,6 @@
-{ pkgs, ... }:
+{ pkgs, private, ... }:
 let
-  network_config = import ./network.nix;
+  network_config = private.network.ivan;
   ssh_port = 21587;
 in
 {
@@ -24,7 +24,7 @@ in
       address = network_config.gateway;
       interface = "ens3";
     };
-    nameservers = [ "1.1.1.1" "8.8.8.8" ];
+    nameservers = network_config.nameservers;
     firewall = {
       enable = true;
       logRefusedConnections = false;

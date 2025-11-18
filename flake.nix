@@ -52,7 +52,7 @@
       nixosConfigurations = import ./nixos { nixpkgs = nixpkgs-stable; home-manager = home-manager-stable; inherit sops-nix private disko; };
 
       deploy.nodes.ivan =
-        import ./hosts/ivan/deploy.nix { inherit self deploy-rs; };
+        import ./nixos/ivan/deploy.nix { inherit self deploy-rs; };
 
       # TODO: uncomment when remote testing will be available in deploy-rs
       # see https://github.com/serokell/deploy-rs/issues/167

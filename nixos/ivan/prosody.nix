@@ -1,6 +1,6 @@
-{ config, pkgs, ... }:
+{ config, pkgs, private, ... }:
 let
-  network_config = import ./network.nix;
+  network_config = private.network.ivan;
   domain = network_config.domain;
 in
 {

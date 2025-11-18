@@ -5,7 +5,7 @@ in
 {
   hostname = "ivan";
   remoteBuild = true;
-  magicRollback = true;
+  magicRollback = false;
   interactiveSudo = false;
   profiles.system = {
     user = "root";
@@ -15,4 +15,5 @@ in
     path = deploy-rs.lib.${system}.activate.nixos self.nixosConfigurations.ivan;
   };
 }
+
 
