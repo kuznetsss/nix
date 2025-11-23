@@ -8,13 +8,10 @@ nixpkgs.lib.nixosSystem {
     ./hardware-configuration.nix
     home-manager.nixosModules.home-manager
     {
-      home-manager.users.sergey = { ... }:
-        {
-          home.stateVersion = "25.05";
-          imports = [
-            ../../home/common/zsh.nix
-          ];
-        };
+      home-manager.users.sergey = { ... }: {
+        home.stateVersion = "25.05";
+        imports = [ ../../home/common/zsh.nix ];
+      };
     }
   ];
 }

@@ -1,8 +1,6 @@
 { self, deploy-rs }:
-let
-  system = self.nixosConfigurations.ivan.config.nixpkgs.hostPlatform.system;
-in
-{
+let system = self.nixosConfigurations.ivan.config.nixpkgs.hostPlatform.system;
+in {
   hostname = "ivan";
   remoteBuild = true;
   magicRollback = false;
@@ -15,5 +13,3 @@ in
     path = deploy-rs.lib.${system}.activate.nixos self.nixosConfigurations.ivan;
   };
 }
-
-

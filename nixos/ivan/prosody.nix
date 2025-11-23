@@ -2,8 +2,7 @@
 let
   network_config = private.network.ivan;
   domain = network_config.domain;
-in
-{
+in {
   users.users.prosody.extraGroups = [ "nginx" "turnserver" ];
 
   security.acme = {
@@ -90,9 +89,7 @@ in
       }
     '';
     muc = [{ domain = "conference.${domain}"; }];
-    httpFileShare = {
-      domain = "upload.${domain}";
-    };
+    httpFileShare = { domain = "upload.${domain}"; };
     modules = {
       csi = false;
       groups = true;
@@ -140,7 +137,8 @@ in
     # tls-listening-port = 50002;
     # min-port = 50004;
     # max-port = 51000;
-    static-auth-secret-file = "${config.sops.secrets."ivan/coturn_auth_key".path}";
+    static-auth-secret-file =
+      "${config.sops.secrets."ivan/coturn_auth_key".path}";
     # static-auth-secret = "${coturn_auth_key}";
     use-auth-secret = true;
     listening-ips = [ "${network_config.ip}" ];

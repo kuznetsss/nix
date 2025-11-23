@@ -1,8 +1,6 @@
 { pkgs, lib, ... }:
-let
-  stdenv = pkgs.stdenv;
-in
-{
+let stdenv = pkgs.stdenv;
+in {
   programs.zsh = {
     autosuggestion.enable = true;
     enable = true;
@@ -29,19 +27,13 @@ in
       EDITOR = "nvim";
       KEYTIMEOUT = 1;
     };
-    shellAliases = {
-      rm = lib.mkIf stdenv.isDarwin "trash";
-    };
-    history = {
-      ignoreAllDups = true;
-    };
+    shellAliases = { rm = lib.mkIf stdenv.isDarwin "trash"; };
+    history = { ignoreAllDups = true; };
     initContent = let
-      before = lib.mkBefore
-      ''
+      before = lib.mkBefore ''
         [[ ! $(command -v nix) && -e "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]] && source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
       '';
-      after = lib.mkAfter
-      ''
+      after = lib.mkAfter ''
         export KEYTIMEOUT=1
         bindkey -v
         bindkey '^?' backward-delete-char
@@ -53,7 +45,8 @@ in
         bindkey -v '^v' edit-command-line
         bindkey -M vicmd '^v' edit-command-line
         [ -f ~/.zshrc_local ] && source ~/.zshrc_local
-      ''; in lib.mkMerge[ before after ];
+      '';
+    in lib.mkMerge [ before after ];
   };
 
   programs.starship = {
@@ -65,9 +58,7 @@ in
         error_symbol = "[✖ ➜](bold red)";
         vimcmd_symbol = "[](bold green)";
       };
-      directory = {
-        truncate_to_repo = false;
-      };
+      directory = { truncate_to_repo = false; };
     };
   };
 

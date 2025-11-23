@@ -2,8 +2,7 @@
 let
   network_config = private.network.operator;
   ssh_port = 21587;
-in
-{
+in {
   time.timeZone = "Europe/London";
   i18n.defaultLocale = "en_US.UTF-8";
   services.journald.extraConfig = "SystemMaxUse=2G";
@@ -16,8 +15,8 @@ in
       logRefusedConnections = false;
       allowPing = true;
       extraCommands = "iptables -A INPUT -i tailscale0 -p tcp -m tcp --dport ${
-            toString ssh_port
-          } -j ACCEPT";
+          toString ssh_port
+        } -j ACCEPT";
     };
   };
 
@@ -25,12 +24,9 @@ in
     enable = true;
     networks."10-ens3" = {
       matchConfig.Name = "ens3";
-      address = [
-        (network_config.ip + "/" + toString network_config.prefixLength)
-      ];
-      routes = [
-        { Gateway = network_config.gateway; }
-      ];
+      address =
+        [ (network_config.ip + "/" + toString network_config.prefixLength) ];
+      routes = [{ Gateway = network_config.gateway; }];
     };
   };
 
@@ -39,9 +35,7 @@ in
     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
     initialPassword = "some_passwd";
     shell = pkgs.zsh;
-    openssh.authorizedKeys.keys = [
-      private.ssh.home_mac_pub_key
-    ];
+    openssh.authorizedKeys.keys = [ private.ssh.home_mac_pub_key ];
   };
 
   nix = {
@@ -61,7 +55,6 @@ in
     device = "/var/lib/swapfile";
     size = 3 * 512; # 1.5GB
   }];
-
 
   services.openssh = {
     enable = true;

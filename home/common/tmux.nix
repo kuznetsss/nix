@@ -8,10 +8,7 @@
     mouse = false;
     historyLimit = 10000;
     keyMode = "vi";
-    plugins = with pkgs; [
-      tmuxPlugins.continuum
-      tmuxPlugins.resurrect
-    ];
+    plugins = with pkgs; [ tmuxPlugins.continuum tmuxPlugins.resurrect ];
     prefix = "C-b";
     shell = "${pkgs.zsh}/bin/zsh";
     terminal = "tmux-256color";

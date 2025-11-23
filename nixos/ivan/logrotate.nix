@@ -15,7 +15,8 @@
     "/var/log/nginx/*.log" = {
       rotate = 7;
       size = "25M";
-      postrotate = "[ ! -f /var/run/nginx/nginx.pid ] || kill -USR1 `cat /var/run/nginx/nginx.pid`";
+      postrotate =
+        "[ ! -f /var/run/nginx/nginx.pid ] || kill -USR1 `cat /var/run/nginx/nginx.pid`";
       su = "nginx nginx";
     };
   };

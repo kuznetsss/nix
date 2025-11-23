@@ -2,8 +2,7 @@
 let
   network_config = private.network.ivan;
   ssh_port = 21587;
-in
-{
+in {
   imports = [ ./hardware-configuration.nix ];
 
   boot.loader.grub.enable = true;
@@ -89,4 +88,3 @@ in
 
   system.stateVersion = "25.05";
 }
-

@@ -1,17 +1,12 @@
 { config, lib, pkgs, util, ... }:
-let
-  wg3Port = 49856;
-in
-{
+let wg3Port = 49856;
+in {
   networking.nat = {
     enable = true;
     externalInterface = "ens3";
     internalInterfaces = [ "wg3" ];
   };
-  networking.firewall = {
-    allowedUDPPorts = [ wg3Port ];
-  };
-
+  networking.firewall = { allowedUDPPorts = [ wg3Port ]; };
 
   networking.wireguard.interfaces = {
     wg3 = {

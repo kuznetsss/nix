@@ -1,9 +1,8 @@
-{ home-manager, nixpkgs, util }:
+{ home-manager, nixpkgs, util, }:
 let
   system = util.system.aarch64-darwin;
   pkgs = nixpkgs.legacyPackages.${system};
-in
-home-manager.lib.homeManagerConfiguration {
+in home-manager.lib.homeManagerConfiguration {
   inherit pkgs;
   modules = [
     {

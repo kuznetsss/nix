@@ -30,26 +30,19 @@
     };
   };
 
-  outputs =
-    { self
-    , nixpkgs
-    , nixpkgs-stable
-    , home-manager
-    , home-manager-stable
-    , deploy-rs
-    , sops-nix
-    , disko
-    , private-part
-    , ...
-    }:
+  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, home-manager-stable
+    , deploy-rs, sops-nix, disko, private-part, ... }:
     let
       util = import ./util { inherit nixpkgs; };
       private = import private-part;
-    in
-    {
+    in {
       homeConfigurations = import ./home { inherit nixpkgs home-manager util; };
 
-      nixosConfigurations = import ./nixos { nixpkgs = nixpkgs-stable; home-manager = home-manager-stable; inherit sops-nix private disko; };
+      nixosConfigurations = import ./nixos {
+        nixpkgs = nixpkgs-stable;
+        home-manager = home-manager-stable;
+        inherit sops-nix private disko;
+      };
 
       deploy.nodes.ivan =
         import ./nixos/ivan/deploy.nix { inherit self deploy-rs; };
@@ -58,7 +51,7 @@
       # see https://github.com/serokell/deploy-rs/issues/167
       # checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) inputs.deploy-rs.lib;
 
-      formatter = util.forEachSystem
-        (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
+      formatter =
+        util.forEachSystem (system: nixpkgs.legacyPackages.${system}.nixfmt);
     };
 }
