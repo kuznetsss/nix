@@ -30,13 +30,24 @@ in {
     };
   };
 
-  users.users.sergey = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-    initialPassword = "some_passwd";
-    shell = pkgs.zsh;
-    openssh.authorizedKeys.keys = [ private.ssh.home_mac_pub_key ];
+  users.users = {
+    sergey = {
+      isNormalUser = true;
+      extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+      initialPassword = "some_passwd";
+      shell = pkgs.zsh;
+      openssh.authorizedKeys.keys = [ private.ssh.home_mac_pub_key ];
+    };
+    deployer = {
+      isNormalUser = true;
+      shell = pkgs.zsh;
+      openssh.authorizedKeys.keys = [ private.ssh.home_mac_pub_key ];
+    };
   };
+
+  security.sudo.extraConfig = ''
+    deployer ALL = (root) NOPASSWD:/run/current-system/sw/bin/nixos-rebuild
+  '';
 
   nix = {
     optimise.automatic = true;
@@ -47,7 +58,7 @@ in {
       options = "--delete-older-than 3d";
     };
   };
-  environment.systemPackages = with pkgs; [ neovim htop deploy-rs ];
+  environment.systemPackages = with pkgs; [ neovim htop git ];
 
   programs.zsh.enable = true;
 

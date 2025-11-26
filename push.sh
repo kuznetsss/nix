@@ -8,7 +8,7 @@ if [ $# -lt 1 ]; then
 fi
 
 REMOTE_HOST="$1"
-USER="${2:-$USER}"
+USER="${2:-deployer}"
 
 echo "🚀 Pushing to $USER@$REMOTE_HOST"
 
