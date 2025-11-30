@@ -15,6 +15,7 @@
       ripgrep
       lazygit
       lazyjj
+      jjui
       nodejs # for github copilot
       gh
       gnupg
