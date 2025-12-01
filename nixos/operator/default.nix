@@ -9,7 +9,7 @@ nixpkgs.lib.nixosSystem {
     home-manager.nixosModules.home-manager
     {
       home-manager.users.sergey = { ... }: {
-        home.stateVersion = "25.05";
+        home.stateVersion = "25.11";
         imports = [ ../../home/common/zsh.nix ];
       };
     }

@@ -12,7 +12,7 @@ nixpkgs.lib.nixosSystem {
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
       home-manager.users.sergey = { ... }: {
-        home.stateVersion = "25.05";
+        home.stateVersion = "25.11";
         imports = [ ../../home/common/zsh.nix ];
       };
     }

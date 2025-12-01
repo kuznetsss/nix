@@ -8,7 +8,7 @@ in home-manager.lib.homeManagerConfiguration {
     {
       home.username = "sergey";
       home.homeDirectory = /Users/sergey;
-      home.stateVersion = "25.05";
+      home.stateVersion = "25.11";
       programs.home-manager.enable = true;
     }
     ./../common/tmux.nix

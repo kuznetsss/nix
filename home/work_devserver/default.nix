@@ -8,7 +8,7 @@ in home-manager.lib.homeManagerConfiguration {
     {
       home.username = "skuznetsov";
       home.homeDirectory = /home/skuznetsov;
-      home.stateVersion = "25.05";
+      home.stateVersion = "25.11";
       programs.home-manager.enable = true;
 
       services.ssh-agent.enable = true;

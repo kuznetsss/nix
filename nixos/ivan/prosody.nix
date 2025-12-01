@@ -59,6 +59,7 @@ in {
 
   services.prosody = {
     enable = true;
+    checkConfig = false;
     package = pkgs.prosody.override {
       withCommunityModules = [
         "log_auth"
