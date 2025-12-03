@@ -15,7 +15,6 @@
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 
-    deploy-rs.url = "github:serokell/deploy-rs";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -30,8 +29,8 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, home-manager-stable
-    , deploy-rs, sops-nix, disko, private-part, ... }:
+  outputs = { nixpkgs, nixpkgs-stable, home-manager, home-manager-stable
+    , sops-nix, disko, private-part, ... }:
     let
       util = import ./util { inherit nixpkgs; };
       private = import private-part;
@@ -44,12 +43,8 @@
         inherit sops-nix private disko;
       };
 
-      deploy.nodes.ivan =
-        import ./nixos/ivan/deploy.nix { inherit self deploy-rs; };
 
-      # TODO: uncomment when remote testing will be available in deploy-rs
-      # see https://github.com/serokell/deploy-rs/issues/167
-      # checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) inputs.deploy-rs.lib;
+      deploy = import ./nixos/deploy.nix;
 
       formatter =
         util.forEachSystem (system: nixpkgs.legacyPackages.${system}.nixfmt);
