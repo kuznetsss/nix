@@ -7,11 +7,6 @@ nixpkgs.lib.nixosSystem {
     ./disk-config.nix
     ./hardware-configuration.nix
     home-manager.nixosModules.home-manager
-    {
-      home-manager.users.sergey = { ... }: {
-        home.stateVersion = "25.11";
-        imports = [ ../../home/common/zsh.nix ];
-      };
-    }
+    (import ../../home/common/base.nix)
   ];
 }
