@@ -4,6 +4,7 @@ nixpkgs.lib.nixosSystem {
   modules = [
     ./sops.nix
     ./configuration.nix
+    ./hardware-configuration.nix
     ./wireguard.nix
     ./prosody.nix
     ./logrotate.nix

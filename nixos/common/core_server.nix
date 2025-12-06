@@ -2,15 +2,16 @@
 let
   networkConfig = private.network.${hostName};
   sshPort = private.ssh.port;
+  lib = pkgs.lib;
 in
   {
-  time.timeZone = "Europe/London";
+  time.timeZone = lib.mkDefault "Europe/London";
   i18n.defaultLocale = "en_US.UTF-8";
   services.journald.extraConfig = "SystemMaxUse=2G";
 
   networking = {
     inherit hostName;
-    useDHCP = false;
+    useDHCP = lib.mkForce false;
     firewall = {
       enable = true;
       logRefusedConnections = false;
