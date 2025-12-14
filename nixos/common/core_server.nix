@@ -38,12 +38,12 @@ in
       extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
       initialPassword = "some_passwd";
       shell = pkgs.zsh;
-      openssh.authorizedKeys.keys = [ private.ssh.home_mac_pub_key ];
+      openssh.authorizedKeys.keys = [ private.ssh.pubKeys.mac ];
     };
     deployer = {
       isNormalUser = true;
       shell = pkgs.zsh;
-      openssh.authorizedKeys.keys = [ private.ssh.home_mac_pub_key ];
+      openssh.authorizedKeys.keys = [ private.ssh.pubKeys.mac ];
     };
   };
 

@@ -118,7 +118,7 @@ in {
 
 
       turn_external_secret = (function()
-        local secret_path = "${config.sops.secrets."ivan/coturn_auth_key".path}"
+        local secret_path = "${config.age.secrets."ivan/coturn_auth_key".path}"
         local file = assert(io.open(secret_path, "r"))
         local data = file:read("*a")
         file:close()
@@ -139,7 +139,7 @@ in {
     # min-port = 50004;
     # max-port = 51000;
     static-auth-secret-file =
-      "${config.sops.secrets."ivan/coturn_auth_key".path}";
+      "${config.age.secrets."ivan/coturn_auth_key".path}";
     # static-auth-secret = "${coturn_auth_key}";
     use-auth-secret = true;
     listening-ips = [ "${network_config.ip}" ];

@@ -1,9 +1,8 @@
-{ nixpkgs, home-manager, sops-nix, private }:
+{ nixpkgs, home-manager, agenix, private, ... }:
 let lib = nixpkgs.lib;
 in lib.nixosSystem {
-  specialArgs = { inherit sops-nix private; };
+  specialArgs = { inherit agenix private; };
   modules = [
-    ./sops.nix
     ./configuration.nix
     ./hardware-configuration.nix
     ./wireguard.nix
@@ -11,5 +10,6 @@ in lib.nixosSystem {
     ./logrotate.nix
     home-manager.nixosModules.home-manager
     (import ../../home/common/base.nix)
+    ./secrets.nix
   ];
 }

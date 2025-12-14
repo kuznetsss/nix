@@ -12,7 +12,7 @@ in home-manager.lib.homeManagerConfiguration {
       programs.home-manager.enable = true;
     }
     ./../common/tmux.nix
-    ./../common/jjui.nix
+    ./../common/jujutsu.nix
     ./../common/wezterm.nix
     ./../common/zsh.nix
     ./../common/packages.nix

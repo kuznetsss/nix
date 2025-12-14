@@ -6,6 +6,7 @@
       # development
       nodePackages.cspell
       zk
+      rumdl
       yamllint
       yaml-language-server
       lua-language-server

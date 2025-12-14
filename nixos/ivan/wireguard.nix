@@ -1,4 +1,4 @@
-{ config, lib, pkgs, util, ... }:
+{ config, pkgs, ... }:
 let wg3Port = 49856;
 in {
   networking.nat = {
@@ -25,7 +25,7 @@ in {
       '';
 
       # publicKey Nw9zxT3UPs5KNuXTQ/7aq0eXrYaCj0I+CIqqYJsxKQU=
-      privateKeyFile = config.sops.secrets."ivan/wg3_private_key".path;
+      privateKeyFile = config.age.secrets."ivan/wg3_private_key".path;
 
       peers = [
         {

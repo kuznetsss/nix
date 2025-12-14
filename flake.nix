@@ -15,8 +15,7 @@
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 
-    sops-nix.url = "github:Mic92/sops-nix";
-    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    agenix.url = "github:ryantm/agenix";
 
     disko = {
       url = "github:nix-community/disko/latest";
@@ -29,8 +28,8 @@
     };
   };
 
-  outputs = { nixpkgs, nixpkgs-stable, home-manager, home-manager-stable
-    , sops-nix, disko, private-part, ... }:
+  outputs = { nixpkgs, nixpkgs-stable, home-manager, home-manager-stable, agenix
+    , disko, private-part, ... }:
     let
       util = import ./util { inherit nixpkgs; };
       private = import private-part;
@@ -40,9 +39,8 @@
       nixosConfigurations = import ./nixos {
         nixpkgs = nixpkgs-stable;
         home-manager = home-manager-stable;
-        inherit sops-nix private disko;
+        inherit agenix private disko;
       };
-
 
       deploy = import ./nixos/deploy.nix;
 
