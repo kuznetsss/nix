@@ -6,8 +6,8 @@ on:
       - main
   pull_request:
     paths:
-      - '**.nix'
-      - 'flake.lock'
+      - "**.nix"
+      - "flake.lock"
   workflow_call:
 
 jobs:
@@ -27,14 +27,10 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.PRIVATE_REPO_SSH_KEY }}
 
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@c5a866b6ab867e88becbed4467b93592bce69f8a # v21
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Setup Magic Nix Cache
-      #   uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
-      #   with:
-      #     use-flakehub: false
-      #
       - name: Run flake check
         run: nix flake check --all-systems
 
