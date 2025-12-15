@@ -57,7 +57,7 @@ jobs:
           BRANCH_NAME="update-flake-$(date +%Y%m%d-%H%M%S)"
           echo "branch-name=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
-          git config user.name "CI"
+          git config user.name "github-actions[bot]"
           git config user.email "kuzzz99@gmail.com"
           git checkout -b "$BRANCH_NAME"
           git add flake.lock
