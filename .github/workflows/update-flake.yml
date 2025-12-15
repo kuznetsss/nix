@@ -69,6 +69,7 @@ jobs:
     needs: update-flake
     if: needs.update-flake.outputs.updated == 'true'
     uses: ./.github/workflows/ci.yml
+    secrets: inherit
     with:
       ref: ${{ needs.update-flake.outputs.branch-name }}
 
