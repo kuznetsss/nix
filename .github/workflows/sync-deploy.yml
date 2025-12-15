@@ -1,0 +1,103 @@
+name: Sync Deploy Branch
+
+on:
+  schedule:
+    # Run every night at 3 AM UTC (after flake update)
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  sync-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get latest main commit status
+        id: check-status
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          MAIN_SHA=$(git rev-parse origin/main)
+          echo "main_sha=$MAIN_SHA" >> $GITHUB_OUTPUT
+          
+          # Get the commit status
+          STATUS=$(gh api "/repos/${{ github.repository }}/commits/$MAIN_SHA/status" --jq '.state')
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
+          echo "Main branch status: $STATUS"
+
+      - name: Merge main to deploy
+        id: merge
+        if: steps.check-status.outputs.status == 'success'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git checkout deploy
+          git merge --ff-only origin/main
+          git push origin deploy
+          
+          echo "merged=true" >> $GITHUB_OUTPUT
+          echo "Successfully merged main into deploy"
+
+      - name: Close existing deploy-blocked issue
+        if: steps.merge.outputs.merged == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Find open issue with deploy-blocked label
+          ISSUE_NUMBER=$(gh issue list --label "deploy-blocked" --state open --json number --jq '.[0].number')
+          
+          if [ -n "$ISSUE_NUMBER" ]; then
+            gh issue close $ISSUE_NUMBER --comment "Main branch is now passing. Deploy branch has been synced."
+            echo "Closed issue #$ISSUE_NUMBER"
+          fi
+
+      - name: Create or update issue for failed merge
+        if: steps.check-status.outputs.status != 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          MAIN_SHA="${{ steps.check-status.outputs.main_sha }}"
+          STATUS="${{ steps.check-status.outputs.status }}"
+          
+          # Check if deploy-blocked issue already exists
+          EXISTING_ISSUE=$(gh issue list --label "deploy-blocked" --state open --json number --jq '.[0].number')
+          
+          ISSUE_BODY="## Deploy Branch Sync Blocked
+
+The deploy branch cannot be synced because the main branch is not passing CI checks.
+
+**Main branch status:** \`$STATUS\`
+**Latest commit:** $MAIN_SHA
+
+### Actions Required
+- Fix the failing checks on the main branch
+- Once fixed, the deploy branch will be automatically synced on the next scheduled run
+
+[View commit status](https://github.com/${{ github.repository }}/commit/$MAIN_SHA)
+[View failed workflow runs](https://github.com/${{ github.repository }}/actions/workflows/ci.yml?query=branch%3Amain)
+
+---
+*Last checked: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*"
+
+          if [ -n "$EXISTING_ISSUE" ]; then
+            # Update existing issue
+            gh issue edit $EXISTING_ISSUE --body "$ISSUE_BODY"
+            gh issue comment $EXISTING_ISSUE --body "Main branch is still failing. Status: \`$STATUS\` (checked at $(date -u '+%Y-%m-%d %H:%M:%S UTC'))"
+            echo "Updated existing issue #$EXISTING_ISSUE"
+          else
+            # Create new issue
+            gh issue create \
+              --title "Deploy branch sync blocked - main branch failing" \
+              --body "$ISSUE_BODY" \
+              --label "deploy-blocked,ci-failure"
+            echo "Created new deploy-blocked issue"
+          fi
