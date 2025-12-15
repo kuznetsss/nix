@@ -56,6 +56,7 @@ jobs:
           git push origin "$BRANCH_NAME"
 
   verify-update:
+    name: Verify configuration
     needs: update-flake
     if: needs.update-flake.outputs.updated == 'true'
     uses: ./.github/workflows/ci.yml
@@ -63,6 +64,7 @@ jobs:
       ref: ${{ needs.update-flake.outputs.branch-name }}
 
   create_PR_on_failure:
+    name: Create PR on failure
     needs: [update-flake, verify-update]
     if: needs.update-flake.outputs.updated == 'true' && needs.verify-update.result != 'success' && always()
     runs-on: ubuntu-latest
@@ -88,11 +90,13 @@ jobs:
           commit-message: "chore: update flake.lock"
           committer: CI <kuzzz99@gmail.com>
           branch: "${{ needs.update-flake.outputs.branch-name }}"
+          base: main
           delete-branch: true
           title: "chore: update flake.lock"
           reviewers: "kuznetsss"
 
   merge_branch_on_success:
+    name: Merge branch on success
     needs: [update-flake, verify-update]
     if: needs.update-flake.outputs.updated == 'true' && needs.verify-update.result == 'success'
     runs-on: ubuntu-latest
