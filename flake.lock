@@ -113,11 +113,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1765682243,
-        "narHash": "sha256-yeCxFV/905Wr91yKt5zrVvK6O2CVXWRMSrxqlAZnLp0=",
+        "lastModified": 1765823531,
+        "narHash": "sha256-tyNJjd48hfgsyEfsq1Ueufg4oJv6b8xBA6NYRJrLPyg=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "58bf3ecb2d0bba7bdf363fc8a6c4d49b4d509d03",
+        "rev": "8315c1544f383b791a3115c9959d1f27920e8320",
         "type": "github"
       },
       "original": {
@@ -177,11 +177,11 @@
     "private-part": {
       "flake": false,
       "locked": {
-        "lastModified": 1765752438,
-        "narHash": "sha256-XxlXdCJbQGcvvhQT6WweFS2V/Fsy+C9/PuRK2VZPpaU=",
+        "lastModified": 1765821150,
+        "narHash": "sha256-LxrV5s41f8pZz3WY2haX1Wk38eG2gbXwy7/iFS7LA+c=",
         "ref": "refs/heads/main",
-        "rev": "770fcc2b0c28b1d32220d7446ea638ff3aa9ba38",
-        "revCount": 7,
+        "rev": "e305b955b9ba1e17fa572dc09a6e7c2cee545413",
+        "revCount": 8,
         "type": "git",
         "url": "ssh://git@github.com/kuznetsss/nix_private.git"
       },
