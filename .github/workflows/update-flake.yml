@@ -41,6 +41,15 @@ jobs:
             echo "Updates available"
           fi
 
+      - name: Setup GPG
+        if: steps.check-changes.outputs.updated == 'true'
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.ACTIONS_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.ACTIONS_GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
       - name: Create and push update branch
         if: steps.check-changes.outputs.updated == 'true'
         id: create-branch
@@ -48,11 +57,11 @@ jobs:
           BRANCH_NAME="update-flake-$(date +%Y%m%d-%H%M%S)"
           echo "branch-name=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "CI"
+          git config user.email "kuzzz99@gmail.com"
           git checkout -b "$BRANCH_NAME"
           git add flake.lock
-          git commit -m "chore: update flake.lock"
+          git commit -S -m "chore: update flake.lock"
           git push origin "$BRANCH_NAME"
 
   verify-update:
@@ -74,26 +83,17 @@ jobs:
         with:
           ref: ${{ needs.update-flake.outputs.branch-name }}
 
-      - uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.ACTIONS_GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.ACTIONS_GPG_PASSPHRASE }}
-          git_user_signingkey: true
-          git_commit_gpgsign: true
-
-      - name: Create PR with fixes
-        uses: peter-evans/create-pull-request@v8
+      - name: Create PR
         env:
-          GH_REPO: ${{ github.repository }}
-          GH_TOKEN: ${{ github.token }}
-        with:
-          commit-message: "chore: update flake.lock"
-          committer: CI <kuzzz99@gmail.com>
-          branch: "${{ needs.update-flake.outputs.branch-name }}"
-          base: main
-          delete-branch: true
-          title: "chore: update flake.lock"
-          reviewers: "kuznetsss"
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+          BRANCH_NAME: ${{ needs.update-flake.outputs.branch-name }}
+        run: |
+          gh pr create \
+            --base main \
+            --head "$BRANCH_NAME" \
+            --title "chore: update flake.lock" \
+            --body "Automated flake.lock update that requires manual review due to CI failures." \
+            --reviewer kuznetsss
 
   merge_branch_on_success:
     name: Merge branch on success
