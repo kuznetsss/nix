@@ -1,0 +1,23 @@
+name: Prepare Runner
+description: Setup SSH keys for private repositories and install Nix
+
+inputs:
+  ssh-private-key:
+    description: 'SSH private key for accessing private repositories'
+    required: true
+  github-token:
+    description: 'GitHub token for Nix installation'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup SSH for private repository
+      uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
+      with:
+        ssh-private-key: ${{ inputs.ssh-private-key }}
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v31
+      with:
+        github_access_token: ${{ inputs.github-token }}

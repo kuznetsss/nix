@@ -15,17 +15,17 @@ jobs:
   update-flake:
     runs-on: ubuntu-latest
     outputs:
-      update-sha: ${{ steps.commit-update.outputs.sha }}
+      branch-name: ${{ steps.create-branch.outputs.branch-name }}
       updated: ${{ steps.check-changes.outputs.updated }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v14
-
-      - name: Setup Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v8
+      - name: Prepare runner
+        uses: ./.github/actions/prepare-runner
+        with:
+          ssh-private-key: ${{ secrets.PRIVATE_REPO_SSH_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update flake inputs
         run: nix flake update
@@ -41,66 +41,65 @@ jobs:
             echo "Updates available"
           fi
 
-      - name: Commit update to main
-        id: commit-update
+      - name: Create and push update branch
         if: steps.check-changes.outputs.updated == 'true'
+        id: create-branch
         run: |
+          BRANCH_NAME="update-flake-$(date +%Y%m%d-%H%M%S)"
+          echo "branch-name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH_NAME"
           git add flake.lock
-          git commit -m "chore: update flake inputs"
-          git push origin main
-          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          git commit -m "chore: update flake.lock"
+          git push origin "$BRANCH_NAME"
 
   verify-update:
     needs: update-flake
     if: needs.update-flake.outputs.updated == 'true'
     uses: ./.github/workflows/ci.yml
+    with:
+      ref: ${{ needs.update-flake.outputs.branch-name }}
 
-  handle-failure:
+  handle-result:
     needs: [update-flake, verify-update]
-    if: failure() && needs.update-flake.outputs.updated == 'true'
+    if: needs.update-flake.outputs.updated == 'true' && always()
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           ref: main
+          fetch-depth: 0
 
-      - name: Revert failed update
+      - name: Merge to main if successful
+        if: needs.verify-update.result == 'success'
+        env:
+          BRANCH_NAME: ${{ needs.update-flake.outputs.branch-name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git revert --no-edit HEAD
+
+          git fetch origin "$BRANCH_NAME"
+          git merge --ff-only "origin/$BRANCH_NAME" -m "chore: update flake.lock"
           git push origin main
 
-      - name: Checkout the update commit
-        run: |
-          git checkout ${{ needs.update-flake.outputs.update-sha }}
+          # Delete the branch
+          git push origin --delete "$BRANCH_NAME"
+          echo "✅ Successfully merged and deleted branch $BRANCH_NAME"
 
-      - name: Create branch with update
-        id: create-branch
-        run: |
-          BRANCH_NAME="flake-update-$(date +%Y%m%d-%H%M%S)"
-          echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
-          git checkout -b $BRANCH_NAME
-          git push origin $BRANCH_NAME
-
-      - name: Create Pull Request
+      - name: Create PR if verification failed
+        if: needs.verify-update.result != 'success'
         env:
+          BRANCH_NAME: ${{ needs.update-flake.outputs.branch-name }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr create \
-            --title "chore: update flake inputs (failed checks)" \
-            --body "Automated flake update that failed CI checks. Please review and fix the issues.
-
-          CI failed for commit ${{ needs.update-flake.outputs.update-sha }}.
-
-          The update was automatically reverted from main and created as a PR for manual review." \
             --base main \
-            --head ${{ steps.create-branch.outputs.branch }} \
-            --label "dependencies,automated"
+            --head "$BRANCH_NAME" \
+            --title "chore: update flake.lock" \
+            --body "Automated flake update failed verification. Please review the changes and CI results." \
+            --reviewer "${{ github.repository_owner }}"
+          echo "⚠️ Created PR for manual review due to verification failure"

@@ -11,3 +11,15 @@ updates:
     commit-message:
       prefix: "chore"
       include: "scope"
+
+  # Composite actions
+  - package-ecosystem: "github-actions"
+    directory: "/.github/actions/prepare-runner"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore"
+      include: "scope"

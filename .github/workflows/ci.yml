@@ -9,6 +9,12 @@ on:
       - "**.nix"
       - "flake.lock"
   workflow_call:
+    inputs:
+      ref:
+        description: "Git ref to checkout"
+        required: false
+        type: string
+        default: ""
 
 jobs:
   check-and-build:
@@ -21,15 +27,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
 
-      - name: Setup SSH for private repository
-        uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
+      - name: Prepare runner
+        uses: ./.github/actions/prepare-runner
         with:
           ssh-private-key: ${{ secrets.PRIVATE_REPO_SSH_KEY }}
-
-      - uses: cachix/install-nix-action@v31
-        with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run flake check
         run: nix flake check --all-systems
