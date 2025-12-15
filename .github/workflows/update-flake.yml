@@ -90,20 +90,6 @@ jobs:
           git push origin --delete "$BRANCH_NAME"
           echo "✅ Successfully merged and deleted branch $BRANCH_NAME"
 
-      - name: Create PR if verification failed
-        if: needs.verify-update.result != 'success'
-        env:
-          BRANCH_NAME: ${{ needs.update-flake.outputs.branch-name }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr create \
-            --base main \
-            --head "$BRANCH_NAME" \
-            --title "chore: update flake.lock" \
-            --body "Automated flake update failed verification. Please review the changes and CI results." \
-            --reviewer "${{ github.repository_owner }}"
-          echo "⚠️ Created PR for manual review due to verification failure"
-
       - uses: crazy-max/ghaction-import-gpg@v6
         if: needs.verify-update.result != 'success'
         with:
