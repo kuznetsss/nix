@@ -46,5 +46,7 @@
 
       formatter =
         util.forEachSystem (system: nixpkgs.legacyPackages.${system}.nixfmt);
+
+      nixConfig = import ./config.nix;
     };
 }

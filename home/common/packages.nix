@@ -28,8 +28,6 @@
       nixfmt-classic
       statix
       nvd
-      age
-      sops
 
       go
       gopls
