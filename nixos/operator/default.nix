@@ -3,6 +3,7 @@ nixpkgs.lib.nixosSystem {
   specialArgs = { inherit private; };
   modules = [
     disko.nixosModules.disko
+    ../common/autoupdate.nix
     ./configuration.nix
     ./disk-config.nix
     ./hardware-configuration.nix

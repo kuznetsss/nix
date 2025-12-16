@@ -1,0 +1,118 @@
+{ pkgs, ... }:
+let
+  deployUser = "deployer";
+  deployDir = "/home/${deployUser}/autoupdate";
+  deployBranch = "deploy";
+  repositoryUrl = "https://github.com/kuznetsss/nix.git";
+
+  updateScript = pkgs.writeShellScript "nixos-autoupdate" ''
+    set -euo pipefail
+
+    log() {
+      echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*"
+    }
+
+    error() {
+      echo "[ERROR] $*" >&2
+    }
+
+    success() {
+      echo "[SUCCESS] $*"
+    }
+
+    warning() {
+      echo "[WARNING] $*"
+    }
+
+    # Remove deploy directory if it exists
+    if [ -d "${deployDir}" ]; then
+      log "Removing existing deploy directory"
+      ${pkgs.coreutils}/bin/rm -rf "${deployDir}"
+    fi
+
+    # Clone repository with only the deploy branch
+    log "Cloning repository from ${repositoryUrl}"
+    if ! ${pkgs.git}/bin/git clone --single-branch --branch ${deployBranch} --depth 1 "${repositoryUrl}" "${deployDir}"; then
+      error "Failed to clone repository from ${repositoryUrl}"
+      exit 1
+    fi
+    success "Repository cloned successfully"
+
+    cd "${deployDir}"
+
+    # Get hostname for building the correct configuration
+    HOSTNAME=$(${pkgs.hostname}/bin/hostname)
+    log "Building configuration for: $HOSTNAME"
+
+    # Build new configuration
+    log "Building new system configuration"
+    if ! ${pkgs.nixos-rebuild}/bin/nixos-rebuild build --flake ".#$HOSTNAME"; then
+      error "Failed to build new configuration"
+      exit 1
+    fi
+    success "Build successful"
+
+    # Try to activate the new configuration
+    log "Attempting to activate new configuration"
+    if ! sudo ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake ".#$HOSTNAME"; then
+      error "Failed to activate new configuration"
+      if sudo ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --rollback; then
+        success "Rollback successful"
+      else
+        error "Rollback failed - system may be in inconsistent state"
+      fi
+      exit 1
+    fi
+
+    success "Successfully updated and activated new configuration"
+    log "Autoupdate completed successfully"
+  '';
+in {
+  # Systemd service for automatic updates
+  systemd.services.nixos-autoupdate = {
+    description = "NixOS automatic update from deploy branch";
+    serviceConfig = {
+      Type = "oneshot";
+      User = deployUser;
+      # Allow the deploy user to run nixos-rebuild with sudo
+      ExecStart = "${updateScript}";
+      # Set working directory
+      WorkingDirectory = deployDir;
+      # Restart on failure
+      Restart = "no";
+      # Logging
+      StandardOutput = "journal";
+      StandardError = "journal";
+    };
+    # Ensure git and network are available
+    wants = [ "network-online.target" ];
+    after = [ "network-online.target" ];
+  };
+
+  # Timer to run the service every night at 4 AM UTC
+  systemd.timers.nixos-autoupdate = {
+    description = "Timer for NixOS automatic updates";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      # Run at 4 AM UTC every day
+      OnCalendar = "*-*-* 04:00:00";
+      # Use UTC timezone
+      # If the system was down at the scheduled time, run on next boot
+      Persistent = false;
+      # Add some randomization to avoid all servers updating at once (0-5 minutes)
+      RandomizedDelaySec = "5min";
+    };
+  };
+
+  # Grant deploy user sudo access for nixos-rebuild and system activation
+  security.sudo.extraRules = [{
+    users = [ deployUser ];
+    commands = [{
+      command = "${pkgs.nixos-rebuild}/bin/nixos-rebuild";
+      options = [ "NOPASSWD" ];
+    }];
+  }];
+
+  # Ensure required packages are available
+  environment.systemPackages = with pkgs; [ git nixos-rebuild ];
+}

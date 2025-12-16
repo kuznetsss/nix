@@ -47,10 +47,6 @@ in
     };
   };
 
-  security.sudo.extraConfig = ''
-    deployer ALL = (root) NOPASSWD:/run/current-system/sw/bin/nixos-rebuild
-  '';
-
   nix = {
     optimise.automatic = true;
     settings.experimental-features = [ "nix-command" "flakes" ];
