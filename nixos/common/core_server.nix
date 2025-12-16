@@ -3,8 +3,7 @@ let
   networkConfig = private.network.${hostName};
   sshPort = private.ssh.port;
   lib = pkgs.lib;
-in
-  {
+in {
   time.timeZone = lib.mkDefault "Europe/London";
   i18n.defaultLocale = "en_US.UTF-8";
   services.journald.extraConfig = "SystemMaxUse=2G";
@@ -46,6 +45,14 @@ in
       openssh.authorizedKeys.keys = [ private.ssh.pubKeys.mac ];
     };
   };
+
+  security.sudo.extraRules = [{
+    users = [ "deployer" ];
+    commands = [{
+      command = "/run/current-system/sw/bin/nixos-rebuild";
+      options = [ "NOPASSWD" ];
+    }];
+  }];
 
   nix = {
     optimise.automatic = true;

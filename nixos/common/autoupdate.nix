@@ -32,7 +32,7 @@ let
 
     # Clone repository with only the deploy branch
     log "Cloning repository from ${repositoryUrl}"
-    if ! ${pkgs.git}/bin/git clone --single-branch --branch ${deployBranch} --depth 1 "${repositoryUrl}" "${deployDir}"; then
+    if ! ${pkgs.util-linux}/bin/runuser -u deployer -- ${pkgs.git}/bin/git clone --single-branch --branch ${deployBranch} --depth 1 "${repositoryUrl}" "${deployDir}"; then
       error "Failed to clone repository from ${repositoryUrl}"
       exit 1
     fi
@@ -45,7 +45,6 @@ let
     log "Building configuration for: $HOSTNAME"
 
     # Build new configuration
-    log "Building new system configuration"
     if ! ${pkgs.nixos-rebuild}/bin/nixos-rebuild build --flake ".#$HOSTNAME"; then
       error "Failed to build new configuration"
       exit 1
@@ -56,9 +55,9 @@ let
 
     # Try to activate the new configuration
     log "Attempting to activate new configuration"
-    if ! ${pkgs.sudo}/bin/sudo ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake ".#$HOSTNAME"; then
+    if ! ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake ".#$HOSTNAME"; then
       error "Failed to activate new configuration"
-      if ${pkgs.sudo}/bin/sudo ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --rollback; then
+      if ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --rollback; then
         success "Rollback successful"
       else
         error "Rollback failed - system may be in inconsistent state"
@@ -73,7 +72,7 @@ let
     log "New system kernel: $NEW_KERNEL_VERSION"
     if [ "$RUNNING_KERNEL_VERSION" != "$NEW_KERNEL_VERSION" ]; then
       log "Kernel version changed: $RUNNING_KERNEL_VERSION -> $NEW_KERNEL_VERSION"
-      ${pkgs.sudo}/bin/sudo ${pkgs.systemd}/bin/shutdown -r +1 "System will reboot in 1 minute to apply updates"
+      ${pkgs.systemd}/bin/shutdown -r +1 "System will reboot in 1 minute to apply updates"
     else
       log "No reboot required - kernel version unchanged"
     fi
@@ -86,7 +85,7 @@ in {
     description = "NixOS automatic update from deploy branch";
     serviceConfig = {
       Type = "oneshot";
-      User = deployUser;
+      User = "root";
       # Allow the deploy user to run nixos-rebuild with sudo
       ExecStart = "${updateScript}";
       # Set working directory
@@ -116,22 +115,4 @@ in {
       RandomizedDelaySec = "5min";
     };
   };
-
-  # Grant deploy user sudo access for nixos-rebuild and system activation
-  security.sudo.extraRules = [{
-    users = [ deployUser ];
-    commands = [
-      {
-        command = "/run/current-system/sw/bin/nixos-rebuild";
-        options = [ "NOPASSWD" ];
-      }
-      {
-        command = "/run/current-system/sw/bin/shutdown";
-        options = [ "NOPASSWD" ];
-      }
-    ];
-  }];
-
-  # Ensure required packages are available
-  environment.systemPackages = with pkgs; [ git nixos-rebuild gnused ];
 }
