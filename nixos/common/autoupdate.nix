@@ -90,7 +90,7 @@ in {
       # Allow the deploy user to run nixos-rebuild with sudo
       ExecStart = "${updateScript}";
       # Set working directory
-      WorkingDirectory = deployDir;
+      WorkingDirectory = "/home/${deployUser}";
       # Restart on failure
       Restart = "no";
       # Logging
