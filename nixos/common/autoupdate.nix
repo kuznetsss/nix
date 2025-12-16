@@ -9,7 +9,7 @@ let
     set -euo pipefail
 
     log() {
-      echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*"
+      echo "$*"
     }
 
     error() {
@@ -56,9 +56,9 @@ let
 
     # Try to activate the new configuration
     log "Attempting to activate new configuration"
-    if ! sudo ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake ".#$HOSTNAME"; then
+    if ! ${pkgs.sudo}/bin/sudo ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake ".#$HOSTNAME"; then
       error "Failed to activate new configuration"
-      if sudo ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --rollback; then
+      if ${pkgs.sudo}/bin/sudo ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --rollback; then
         success "Rollback successful"
       else
         error "Rollback failed - system may be in inconsistent state"
@@ -73,7 +73,7 @@ let
     log "New system kernel: $NEW_KERNEL_VERSION"
     if [ "$RUNNING_KERNEL_VERSION" != "$NEW_KERNEL_VERSION" ]; then
       log "Kernel version changed: $RUNNING_KERNEL_VERSION -> $NEW_KERNEL_VERSION"
-      sudo ${pkgs.systemd}/bin/shutdown -r +1 "System will reboot in 1 minute to apply updates"
+      ${pkgs.sudo}/bin/sudo ${pkgs.systemd}/bin/shutdown -r +1 "System will reboot in 1 minute to apply updates"
     else
       log "No reboot required - kernel version unchanged"
     fi
