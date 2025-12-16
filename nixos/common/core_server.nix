@@ -79,6 +79,13 @@ in {
     priority = 0;
   }];
 
+  systemd.oomd.enable = false;
+  services.earlyoom = {
+    enable = true;
+    freeMemKillThreshold = 5;
+    freeSwapKillThreshold = 5;
+  };
+
   services.openssh = {
     enable = true;
     settings = {
