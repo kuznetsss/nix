@@ -1,12 +1,15 @@
 { pkgs, ... }:
 let
-  deployUser = "deployer";
-  deployDir = "/home/${deployUser}/autoupdate";
+  deployDir = "/var/lib/autoupdate";
   deployBranch = "deploy";
   repositoryUrl = "https://github.com/kuznetsss/nix.git";
+  sshKeyPath = "/home/deployer/.ssh/id_ed25519";
 
   updateScript = pkgs.writeShellScript "nixos-autoupdate" ''
     set -euo pipefail
+
+    export GIT_SSH_COMMAND="${pkgs.openssh}/bin/ssh -i ${sshKeyPath} -o StrictHostKeyChecking=accept-new"
+    export NIX_SSHOPTS="-i ${sshKeyPath}"
 
     log() {
       echo "$*"
@@ -32,7 +35,7 @@ let
 
     # Clone repository with only the deploy branch
     log "Cloning repository from ${repositoryUrl}"
-    if ! ${pkgs.util-linux}/bin/runuser -u deployer -- ${pkgs.git}/bin/git clone --single-branch --branch ${deployBranch} --depth 1 "${repositoryUrl}" "${deployDir}"; then
+    if ! ${pkgs.git}/bin/git clone --single-branch --branch ${deployBranch} --depth 1 "${repositoryUrl}" "${deployDir}"; then
       error "Failed to clone repository from ${repositoryUrl}"
       exit 1
     fi
@@ -89,7 +92,7 @@ in {
       # Allow the deploy user to run nixos-rebuild with sudo
       ExecStart = "${updateScript}";
       # Set working directory
-      WorkingDirectory = "/home/${deployUser}";
+      WorkingDirectory = "/var/lib";
       # Restart on failure
       Restart = "no";
       # Logging
