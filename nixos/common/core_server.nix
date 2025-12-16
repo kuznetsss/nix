@@ -67,9 +67,16 @@ in {
 
   programs.zsh.enable = true;
 
+  zramSwap = {
+    enable = true;
+    algorithm = "lz4";
+    priority = 5;
+  };
+
   swapDevices = [{
     device = "/var/lib/swapfile";
     size = 3 * 512; # 1.5GB
+    priority = 0;
   }];
 
   services.openssh = {
