@@ -52,6 +52,8 @@ let
     fi
     success "Build successful"
 
+    RUNNING_KERNEL_VERSION=$(${pkgs.coreutils}/bin/uname -r)
+
     # Try to activate the new configuration
     log "Attempting to activate new configuration"
     if ! sudo ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake ".#$HOSTNAME"; then
@@ -65,6 +67,17 @@ let
     fi
 
     success "Successfully updated and activated new configuration"
+
+    NEW_KERNEL=$(${pkgs.coreutils}/bin/readlink -f /nix/var/nix/profiles/system/kernel)
+    NEW_KERNEL_VERSION=$(echo "$NEW_KERNEL" | ${pkgs.gnused}/bin/sed -n 's/.*linux-\([0-9.]*\).*/\1/p')
+    log "New system kernel: $NEW_KERNEL_VERSION"
+    if [ "$RUNNING_KERNEL_VERSION" != "$NEW_KERNEL_VERSION" ]; then
+      log "Kernel version changed: $RUNNING_KERNEL_VERSION -> $NEW_KERNEL_VERSION"
+      sudo ${pkgs.systemd}/bin/shutdown -r +1 "System will reboot in 1 minute to apply updates"
+    else
+      log "No reboot required - kernel version unchanged"
+    fi
+
     log "Autoupdate completed successfully"
   '';
 in {
@@ -107,12 +120,18 @@ in {
   # Grant deploy user sudo access for nixos-rebuild and system activation
   security.sudo.extraRules = [{
     users = [ deployUser ];
-    commands = [{
-      command = "${pkgs.nixos-rebuild}/bin/nixos-rebuild";
-      options = [ "NOPASSWD" ];
-    }];
+    commands = [
+      {
+        command = "/run/current-system/sw/bin/nixos-rebuild";
+        options = [ "NOPASSWD" ];
+      }
+      {
+        command = "/run/current-system/sw/bin/shutdown";
+        options = [ "NOPASSWD" ];
+      }
+    ];
   }];
 
   # Ensure required packages are available
-  environment.systemPackages = with pkgs; [ git nixos-rebuild ];
+  environment.systemPackages = with pkgs; [ git nixos-rebuild gnused ];
 }
