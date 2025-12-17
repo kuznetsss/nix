@@ -133,7 +133,6 @@ in {
     cert = "/var/lib/acme/${domain}/fullchain.pem";
     pkey = "/var/lib/acme/${domain}/key.pem";
     realm = "${domain}";
-    no-tcp-relay = true;
     # listening-port = 50000;
     # tls-listening-port = 50002;
     # min-port = 50004;
@@ -169,7 +168,7 @@ in {
 
       # special case the turn server itself so that client->TURN->TURN->client flows work
       # this should be one of the turn server's listening IPs
-      allowed-peer-ip=10.0.0.1
+      allowed-peer-ip=${private.network.ivan.ip}
 
       # consider whether you want to limit the quota of relayed streams per user (or total) to avoid risk of DoS.
       total-quota=1200
