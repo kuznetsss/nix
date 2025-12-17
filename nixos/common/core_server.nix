@@ -70,20 +70,20 @@ in {
   zramSwap = {
     enable = true;
     algorithm = "lz4";
-    priority = 5;
+    priority = 10;
   };
 
   swapDevices = [{
     device = "/var/lib/swapfile";
     size = 3 * 512; # 1.5GB
-    priority = 0;
+    priority = 5;
   }];
 
   systemd.oomd.enable = false;
   services.earlyoom = {
     enable = true;
-    freeMemKillThreshold = 5;
-    freeSwapKillThreshold = 5;
+    freeMemKillThreshold = 3;
+    freeSwapKillThreshold = 1;
   };
 
   services.openssh = {
