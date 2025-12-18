@@ -1,4 +1,4 @@
-{ config, pkgs, private, agenix, ... }:
+{ config, pkgs, private, ... }:
 let
   hostName = config.networking.hostName;
   networkConfig = private.network.${hostName};
@@ -50,20 +50,7 @@ in {
         shell = pkgs.zsh;
         openssh.authorizedKeys.keys = [ private.ssh.pubKeys.mac ];
       };
-      deployer = {
-        isNormalUser = true;
-        shell = pkgs.zsh;
-        openssh.authorizedKeys.keys = [ private.ssh.pubKeys.mac ];
-      };
     };
-
-    security.sudo.extraRules = [{
-      users = [ "deployer" ];
-      commands = [{
-        command = "/run/current-system/sw/bin/nixos-rebuild";
-        options = [ "NOPASSWD" ];
-      }];
-    }];
 
     nix = {
       optimise.automatic = true;
@@ -96,7 +83,7 @@ in {
       freeMemThreshold = 1;
       freeSwapThreshold = 1;
       freeMemKillThreshold = 3;
-      freeSwapKillThreshold = 1;
+      freeSwapKillThreshold = 3;
     };
 
     services.openssh = {

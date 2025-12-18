@@ -42,8 +42,6 @@
         inherit agenix private disko;
       };
 
-      deploy = import ./nixos/deploy.nix;
-
       formatter =
         util.forEachSystem (system: nixpkgs.legacyPackages.${system}.nixfmt);
 
