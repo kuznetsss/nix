@@ -1,11 +1,10 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, ... }@args:
 let
   deployDir = "/var/lib/autoupdate";
   deployBranch = "deploy";
   repositoryUrl = "https://github.com/kuznetsss/nix.git";
   sshKeyPath = "/home/deployer/.ssh/id_ed25519";
-
-  # sendTg = config.services.telegram-notify.script;
+  hostName = config.networking.hostName;
 
   updateScript = pkgs.writeShellScript "nixos-autoupdate" ''
     set -euo pipefail
@@ -46,7 +45,7 @@ let
     cd "${deployDir}"
 
     # Get hostname for building the correct configuration
-    HOSTNAME="${config.networking.hostName}"
+    HOSTNAME="${hostName}"
     log "Building configuration for: $HOSTNAME"
 
     # Build new configuration
@@ -83,13 +82,11 @@ let
     fi
 
     log "Autoupdate completed successfully"
+    exit 1
   '';
-
-  # failureNotifyScript = pkgs.writeShellScript "autoupdate-failure-notify" ''
-  #   HOSTNAME=$(${pkgs.hostname}/bin/hostname)
-  #   ${sendTg} "⚠️ NixOS autoupdate failed on $HOSTNAME. Check systemd logs: journalctl -u nixos-autoupdate.service"
-  # '';
 in {
+  imports = [ (import ./send_to_telegram.nix args) ];
+
   options = {
     modules.autoupdate = {
       enable = lib.mkOption {
@@ -99,53 +96,61 @@ in {
       };
       notifyOnFailure = lib.mkOption {
         type = lib.types.bool;
-        default = false;
+        default = true;
         description = "Send telegram bot notification on failure";
       };
     };
   };
 
-  config = lib.mkIf config.modules.autoupdate.enable {
-    systemd.services.nixos-autoupdate = {
-      enable = true;
-      description = "NixOS automatic update from deploy branch";
-      serviceConfig = {
-        Type = "oneshot";
-        User = "root";
-        ExecStart = "${updateScript}";
-        WorkingDirectory = "/var/lib";
-        Restart = "no";
-        StandardOutput = "journal";
-        StandardError = "journal";
+  config = lib.mkIf config.modules.autoupdate.enable (lib.mkMerge [
+    {
+      systemd.services.nixos-autoupdate = {
+        enable = true;
+        description = "NixOS automatic update from deploy branch";
+        restartIfChanged = false;
+        unitConfig.X-StopOnRemoval = false;
+        serviceConfig = {
+          Type = "oneshot";
+          User = "root";
+          ExecStart = "${updateScript}";
+          WorkingDirectory = "/var/lib";
+          Restart = "no";
+          StandardOutput = "journal";
+          StandardError = "journal";
+        };
+        wants = [ "network-online.target" ];
+        after = [ "network-online.target" ];
       };
-      wants = [ "network-online.target" ];
-      after = [ "network-online.target" ];
-      # onFailure = [ "nixos-autoupdate-failure-notify.service" ];
-    };
 
-    # Service to send notification on autoupdate failure
-    # systemd.services.nixos-autoupdate-failure-notify = {
-    #   description = "Send Telegram notification on autoupdate failure";
-    #   serviceConfig = {
-    #     Type = "oneshot";
-    #     User = "root";
-    #     ExecStart = "${failureNotifyScript}";
-    #   };
-    # };
-    #
-    # # Timer to run the service every night at 4 AM UTC
-    # systemd.timers.nixos-autoupdate = {
-    #   description = "Timer for NixOS automatic updates";
-    #   wantedBy = [ "timers.target" ];
-    #   timerConfig = {
-    #     # Run at 4 AM UTC every day
-    #     OnCalendar = "*-*-* 04:00:00";
-    #     # Use UTC timezone
-    #     # If the system was down at the scheduled time, run on next boot
-    #     Persistent = false;
-    #     # Add some randomization to avoid all servers updating at once (0-5 minutes)
-    #     RandomizedDelaySec = "5min";
-    #   };
-    # };
-  };
+      systemd.timers.nixos-autoupdate = {
+        description = "Timer for NixOS automatic updates";
+        wantedBy = [ "timers.target" ];
+        timerConfig = {
+          OnCalendar = "*-*-* 04:00:00";
+          Persistent = false;
+          RandomizedDelaySec = "5min";
+        };
+      };
+    }
+
+    (lib.mkIf config.modules.autoupdate.notifyOnFailure {
+      systemd.services.nixos-autoupdate.onFailure =
+        [ "nixos-autoupdate-failure-notify.service" ];
+
+      systemd.services.nixos-autoupdate-failure-notify = {
+        description = "Send Telegram notification on autoupdate failure";
+        serviceConfig = {
+          Type = "oneshot";
+          User = "root";
+          ExecStart = ''
+            ${config.modules.telegram-notify.script} -s "⚠️ NixOS autoupdate failed on the host `${hostName}`"'';
+          TimeoutStartSec = "2s";
+          Restart = "on-failure";
+          RestartSec = "1s";
+          StartLimitBurst = 3;
+          StartLimitIntervalSec = 0;
+        };
+      };
+    })
+  ]);
 }

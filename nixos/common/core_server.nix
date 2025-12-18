@@ -1,4 +1,4 @@
-{ config, pkgs, private, ... }:
+{ config, pkgs, private, agenix, ... }:
 let
   hostName = config.networking.hostName;
   networkConfig = private.network.${hostName};

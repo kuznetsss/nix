@@ -1,6 +1,6 @@
-{ nixpkgs, home-manager, private, disko,  ... }:
+{ nixpkgs, home-manager, private, disko, agenix, ... }:
 nixpkgs.lib.nixosSystem {
-  specialArgs = { inherit private; };
+  specialArgs = { inherit private agenix; };
   modules = [
     disko.nixosModules.disko
     ./disk-config.nix
