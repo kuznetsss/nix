@@ -1,9 +1,11 @@
-{ pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
   deployDir = "/var/lib/autoupdate";
   deployBranch = "deploy";
   repositoryUrl = "https://github.com/kuznetsss/nix.git";
   sshKeyPath = "/home/deployer/.ssh/id_ed25519";
+
+  # sendTg = config.services.telegram-notify.script;
 
   updateScript = pkgs.writeShellScript "nixos-autoupdate" ''
     set -euo pipefail
@@ -44,7 +46,7 @@ let
     cd "${deployDir}"
 
     # Get hostname for building the correct configuration
-    HOSTNAME=$(${pkgs.hostname}/bin/hostname)
+    HOSTNAME="${config.networking.hostName}"
     log "Building configuration for: $HOSTNAME"
 
     # Build new configuration
@@ -82,40 +84,68 @@ let
 
     log "Autoupdate completed successfully"
   '';
+
+  # failureNotifyScript = pkgs.writeShellScript "autoupdate-failure-notify" ''
+  #   HOSTNAME=$(${pkgs.hostname}/bin/hostname)
+  #   ${sendTg} "⚠️ NixOS autoupdate failed on $HOSTNAME. Check systemd logs: journalctl -u nixos-autoupdate.service"
+  # '';
 in {
-  # Systemd service for automatic updates
-  systemd.services.nixos-autoupdate = {
-    description = "NixOS automatic update from deploy branch";
-    serviceConfig = {
-      Type = "oneshot";
-      User = "root";
-      # Allow the deploy user to run nixos-rebuild with sudo
-      ExecStart = "${updateScript}";
-      # Set working directory
-      WorkingDirectory = "/var/lib";
-      # Restart on failure
-      Restart = "no";
-      # Logging
-      StandardOutput = "journal";
-      StandardError = "journal";
+  options = {
+    modules.autoupdate = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable pull based autoupdate";
+      };
+      notifyOnFailure = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Send telegram bot notification on failure";
+      };
     };
-    # Ensure git and network are available
-    wants = [ "network-online.target" ];
-    after = [ "network-online.target" ];
   };
 
-  # Timer to run the service every night at 4 AM UTC
-  systemd.timers.nixos-autoupdate = {
-    description = "Timer for NixOS automatic updates";
-    wantedBy = [ "timers.target" ];
-    timerConfig = {
-      # Run at 4 AM UTC every day
-      OnCalendar = "*-*-* 04:00:00";
-      # Use UTC timezone
-      # If the system was down at the scheduled time, run on next boot
-      Persistent = false;
-      # Add some randomization to avoid all servers updating at once (0-5 minutes)
-      RandomizedDelaySec = "5min";
+  config = lib.mkIf config.modules.autoupdate.enable {
+    systemd.services.nixos-autoupdate = {
+      enable = true;
+      description = "NixOS automatic update from deploy branch";
+      serviceConfig = {
+        Type = "oneshot";
+        User = "root";
+        ExecStart = "${updateScript}";
+        WorkingDirectory = "/var/lib";
+        Restart = "no";
+        StandardOutput = "journal";
+        StandardError = "journal";
+      };
+      wants = [ "network-online.target" ];
+      after = [ "network-online.target" ];
+      # onFailure = [ "nixos-autoupdate-failure-notify.service" ];
     };
+
+    # Service to send notification on autoupdate failure
+    # systemd.services.nixos-autoupdate-failure-notify = {
+    #   description = "Send Telegram notification on autoupdate failure";
+    #   serviceConfig = {
+    #     Type = "oneshot";
+    #     User = "root";
+    #     ExecStart = "${failureNotifyScript}";
+    #   };
+    # };
+    #
+    # # Timer to run the service every night at 4 AM UTC
+    # systemd.timers.nixos-autoupdate = {
+    #   description = "Timer for NixOS automatic updates";
+    #   wantedBy = [ "timers.target" ];
+    #   timerConfig = {
+    #     # Run at 4 AM UTC every day
+    #     OnCalendar = "*-*-* 04:00:00";
+    #     # Use UTC timezone
+    #     # If the system was down at the scheduled time, run on next boot
+    #     Persistent = false;
+    #     # Add some randomization to avoid all servers updating at once (0-5 minutes)
+    #     RandomizedDelaySec = "5min";
+    #   };
+    # };
   };
 }

@@ -1,20 +1,18 @@
-{ nixpkgs, home-manager, private, disko, agenix, ... }:
+{ nixpkgs, home-manager, private, disko,  ... }:
 nixpkgs.lib.nixosSystem {
   specialArgs = { inherit private; };
   modules = [
     disko.nixosModules.disko
-    ../common/autoupdate.nix
-    ./configuration.nix
     ./disk-config.nix
     ./hardware-configuration.nix
+
+    ../common/core_server.nix
+    {
+      networking.hostName = "operator";
+      modules.autoupdate.enable = true;
+    }
+
     home-manager.nixosModules.home-manager
     (import ../../home/common/base.nix)
-    agenix.nixosModules.default
-    {
-      age.secrets.test.file = private.secretPath {
-        host = "operator";
-        name = "test";
-      };
-    }
   ];
 }
