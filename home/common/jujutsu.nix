@@ -3,6 +3,7 @@
   home.file.".config/jjui/config.toml".text = ''
     [keys]
     cancel = ["q"]
+    force_apply = ["ctrl+enter"]
 
     [ui.colors]
     "text"      = { fg = "#d3c6aa", bg = "#2d353b" }

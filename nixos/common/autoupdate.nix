@@ -82,7 +82,6 @@ let
     fi
 
     log "Autoupdate completed successfully"
-    exit 1
   '';
 in {
   imports = [ (import ./send_to_telegram.nix args) ];
