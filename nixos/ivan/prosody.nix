@@ -175,8 +175,8 @@ in {
       # consider whether you want to limit the quota of relayed streams per user (or total) to avoid risk of DoS.
       # total-quota=0  # 0 = unlimited (recommended for small private servers)
       ## Debugging
-      Verbose
-      fingerprint
+      # Verbose
+      # fingerprint
     '';
   };
 
