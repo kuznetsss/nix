@@ -7,10 +7,7 @@ nixpkgs.lib.nixosSystem {
     ./hardware-configuration.nix
 
     ../common/core_server.nix
-    {
-      networking.hostName = "operator";
-      modules.autoupdate.enable = true;
-    }
+    { networking.hostName = "operator"; }
 
     home-manager.nixosModules.home-manager
     (import ../../home/common/base.nix)

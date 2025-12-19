@@ -7,7 +7,7 @@ in {
     modules.autoupdate = {
       enable = lib.mkOption {
         type = lib.types.bool;
-        default = false;
+        default = true;
         description = "Enable pull based autoupdate from deploy branch";
       };
       notifyOnFailure = lib.mkOption {
