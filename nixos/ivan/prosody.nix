@@ -3,7 +3,8 @@ let
   network_config = private.network.ivan;
   domain = network_config.domain;
 in {
-  users.users.prosody.extraGroups = [ "nginx" "turnserver" ];
+  users.users.prosody.extraGroups = [ "acme" "turnserver" "nginx" ];
+  users.users.turnserver.extraGroups = [ "acme" "nginx" ];
 
   security.acme = {
     acceptTerms = true;
@@ -64,11 +65,11 @@ in {
       withCommunityModules = [
         "log_auth"
         "csi_battery_saver"
-        # "sasl_ssdp"
-        # "sasl2"
-        # "sasl2_bind2"
-        # "sasl2_sm"
-        # "sasl2_fast"
+        "sasl_ssdp"
+        "sasl2"
+        "sasl2_bind2"
+        "sasl2_sm"
+        "sasl2_fast"
       ];
     };
 
@@ -122,7 +123,7 @@ in {
         local file = assert(io.open(secret_path, "r"))
         local data = file:read("*a")
         file:close()
-        return data
+        return data:gsub("^%s*(.-)%s*$", "%1")  -- trim whitespace
       end)()
 
     '';
@@ -145,15 +146,12 @@ in {
     relay-ips = [ "${network_config.ip}" ];
     extraConfig = ''
       no-multicast-peers
-      # For security reasons, disable older STUN backward compatibility.
-      no-stun-backward-compatibility
       denied-peer-ip=10.0.0.0-10.255.255.255
       denied-peer-ip=192.168.0.0-192.168.255.255
       denied-peer-ip=172.16.0.0-172.31.255.255
 
       # recommended additional local peers to block, to mitigate external access to internal services.
       # https://www.rtcsec.com/article/slack-webrtc-turn-compromise-and-bug-bounty/#how-to-fix-an-open-turn-relay-to-address-this-vulnerability
-      no-multicast-peers
       denied-peer-ip=0.0.0.0-0.255.255.255
       denied-peer-ip=100.64.0.0-100.127.255.255
       denied-peer-ip=127.0.0.0-127.255.255.255
@@ -171,9 +169,10 @@ in {
       allowed-peer-ip=${private.network.ivan.ip}
 
       # consider whether you want to limit the quota of relayed streams per user (or total) to avoid risk of DoS.
-      total-quota=1200
-      # Verbose
-      # fingerprint
+      # total-quota=0  # 0 = unlimited (recommended for small private servers)
+      ## Debugging
+      Verbose
+      fingerprint
     '';
   };
 
