@@ -151,11 +151,6 @@
         })
       end
 
-      -- wezterm.on('window-focus-changed', function(window, pane)
-      --   local csi = window:is_focused() and '[I' or '[O'
-      --   pane:send_text(csi)
-      -- end)
-
       return {
         allow_square_glyphs_to_overflow_width = "Always",
         audible_bell = "Disabled",
@@ -166,33 +161,6 @@
         keys = keys,
         leader = { mods = 'CTRL', key = 'b' },
         font = wezterm.font('JetBrains Mono', {weight='Regular'}),
-        font_rules = {
-          {
-            italic = false,
-            intensity = "Bold",
-            font = wezterm.font('JetBrains Mono', {weight='Bold'}),
-          },
-          {
-            italic = true,
-            intensity = "Normal",
-            font = wezterm.font('JetBrains Mono', {weight='Regular', italic=true}),
-          },
-          {
-            italic = true,
-            intensity = "Bold",
-            font = wezterm.font('JetBrains Mono', {weight='Bold', italic=true}),
-          },
-          {
-            italic = false,
-            intensity = "Half",
-            font = wezterm.font('JetBrains Mono', {weight='Light'}),
-          },
-          {
-            italic = true,
-            intensity = "Half",
-            font = wezterm.font('JetBrains Mono', {weight='Light', italic=true}),
-          },
-        },
         font_size = 14.0,
         force_reverse_video_cursor = true,
         native_macos_fullscreen_mode = true,
