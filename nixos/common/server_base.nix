@@ -10,7 +10,7 @@ in {
     assertions = [{
       assertion = config.networking.hostName != "nixos";
       message = ''
-        networking.hostName must be set to use core_server.nix
+        networking.hostName must be set to use server_base.nix
         Add { networking.hostName = "some_hostname"; } in your system configuration.
       '';
     }];

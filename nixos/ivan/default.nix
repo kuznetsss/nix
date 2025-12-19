@@ -4,7 +4,7 @@ nixpkgs.lib.nixosSystem {
   modules = [
     ./hardware-configuration.nix
 
-    ../common/core_server.nix
+    ../common/server_base.nix
     {
       networking.hostName = "ivan";
       boot.loader.grub.enable = true;

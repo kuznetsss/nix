@@ -4,7 +4,7 @@ in {
   imports = [ ./send_to_telegram.nix ];
 
   options = {
-    modules.autoupdate = {
+    server_base.autoupdate = {
       enable = lib.mkOption {
         type = lib.types.bool;
         default = true;
@@ -24,7 +24,7 @@ in {
     };
   };
 
-  config = lib.mkIf config.modules.autoupdate.enable (lib.mkMerge [
+  config = lib.mkIf config.server_base.autoupdate.enable (lib.mkMerge [
     {
       # Use the upstream NixOS auto-upgrade module
       system.autoUpgrade = {
@@ -34,7 +34,7 @@ in {
         flake = "github:kuznetsss/nix/deploy#${hostName}";
 
         # Choose operation mode (switch or boot)
-        operation = config.modules.autoupdate.operation;
+        operation = config.server_base.autoupdate.operation;
 
         # Don't update flake.lock, use the locked versions from deploy branch
         upgrade = false;
@@ -47,7 +47,7 @@ in {
       };
     }
 
-    (lib.mkIf config.modules.autoupdate.notifyOnFailure {
+    (lib.mkIf config.server_base.autoupdate.notifyOnFailure {
       # Hook failure notification to the upstream service
       systemd.services.nixos-upgrade.onFailure =
         [ "nixos-autoupdate-failure-notify.service" ];
@@ -58,7 +58,7 @@ in {
           Type = "oneshot";
           User = "root";
           ExecStart = ''
-            ${config.modules.telegram-notify.script} -s "⚠️ NixOS autoupdate failed on the host `${hostName}`"'';
+            ${config.server_base.telegram-notify.script} -s "⚠️ NixOS autoupdate failed on the host `${hostName}`"'';
           TimeoutStartSec = "2s";
           Restart = "on-failure";
           RestartSec = "1s";

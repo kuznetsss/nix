@@ -6,7 +6,7 @@ nixpkgs.lib.nixosSystem {
     ./disk-config.nix
     ./hardware-configuration.nix
 
-    ../common/core_server.nix
+    ../common/server_base.nix
     { networking.hostName = "operator"; }
 
     home-manager.nixosModules.home-manager

@@ -29,7 +29,7 @@ let
 in {
   imports = [ agenix.nixosModules.default ];
 
-  options.modules.telegram-notify = {
+  options.server_base.telegram-notify = {
     script = lib.mkOption {
       type = lib.types.path;
       readOnly = true;
