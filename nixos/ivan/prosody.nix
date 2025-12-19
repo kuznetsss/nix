@@ -116,7 +116,7 @@ in {
       s2s_direct_tls_ports = { 5224 }
       turn_external_host = "${domain}"
       turn_external_port = ${toString config.services.coturn.listening-port}
-
+      turn_external_ttl = 7200
 
       turn_external_secret = (function()
         local secret_path = "${config.age.secrets."ivan/coturn_auth_key".path}"
@@ -146,6 +146,10 @@ in {
     relay-ips = [ "${network_config.ip}" ];
     extraConfig = ''
       no-multicast-peers
+      max-allocate-lifetime=7200
+      max-allocate-timeout=7200
+      stale-nonce=600
+      no-tcp-relay
       denied-peer-ip=10.0.0.0-10.255.255.255
       denied-peer-ip=192.168.0.0-192.168.255.255
       denied-peer-ip=172.16.0.0-172.31.255.255
