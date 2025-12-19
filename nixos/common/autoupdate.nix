@@ -43,6 +43,7 @@ in {
         dates = "03:30:00";
         randomizedDelaySec = "5min";
         persistent = false;
+        allowReboot = true;
       };
     }
 
