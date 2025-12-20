@@ -6,6 +6,22 @@ let
   lib = pkgs.lib;
 in {
   imports = [ ../common/autoupdate.nix ];
+
+  options = {
+    server_base.allowSshFromTailscale = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Add a firewall rule to open ssh port for tailscale";
+    };
+
+    server_base.useDHCP = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description =
+        "Whether to use DHCP. If not enabled static config will be taken from private";
+    };
+  };
+
   config = {
     assertions = [{
       assertion = config.networking.hostName != "nixos";
@@ -36,9 +52,14 @@ in {
       enable = true;
       networks."10-ens3" = {
         matchConfig.Name = "ens3";
-        address =
+
+        address = lib.mkIf (!config.server_base.useDHCP)
           [ (networkConfig.ip + "/" + toString networkConfig.prefixLength) ];
-        routes = [{ Gateway = networkConfig.gateway; }];
+        routes = lib.mkIf (!config.server_base.useDHCP) [{
+          Gateway = networkConfig.gateway;
+        }];
+
+        DHCP = lib.mkIf config.server_base.useDHCP "yes";
       };
     };
 
@@ -66,14 +87,14 @@ in {
     programs.zsh.enable = true;
 
     zramSwap = {
-      enable = true;
-      algorithm = "lz4";
+      enable = lib.mkDefault true;
+      algorithm = lib.mkDefault "lz4";
       priority = 10;
     };
 
     swapDevices = [{
       device = "/var/lib/swapfile";
-      size = 3 * 512; # 1.5GB
+      size = lib.mkDefault (3 * 512); # 1.5GB
       priority = 5;
     }];
 
@@ -93,7 +114,7 @@ in {
         PermitRootLogin = "no";
       };
       ports = [ sshPort ];
-      openFirewall = false;
+      openFirewall = lib.mkDefault false;
     };
 
     services.tailscale = {
