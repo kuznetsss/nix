@@ -44,8 +44,8 @@ in {
           allowedIPs = [ "10.0.30.8/32" ];
         }
         {
-          # Alex
-          publicKey = "Y+NNha4lTlKlBYm3R+BTLfQGnqmQGVIOGvDBHIOhwmg=";
+          # Router
+          publicKey = "cxtk0evE3XX8fscjceSuTk4iGhvly54K/ZFBy8boniA=";
           allowedIPs = [ "10.0.30.9/32" ];
         }
       ];

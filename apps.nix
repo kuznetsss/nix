@@ -19,7 +19,7 @@ in forEachSystem (system:
       ${pkgs.nix}/bin/nix flake check --no-build --all-systems --show-trace
 
       echo "Deploying to $HOST..."
-      nixos-rebuild switch \
+      ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch \
         --flake ".#$HOST" \
         --target-host "$HOST" \
         --build-host "$HOST" \
