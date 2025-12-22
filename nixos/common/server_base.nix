@@ -20,6 +20,12 @@ in {
       description =
         "Whether to use DHCP. If not enabled static config will be taken from private";
     };
+
+    server_base.networkInterface = lib.mkOption {
+      type = lib.types.str;
+      default = "ens3";
+      description = "The network interface to configure";
+    };
   };
 
   config = {
@@ -50,8 +56,8 @@ in {
 
     systemd.network = {
       enable = true;
-      networks."10-ens3" = {
-        matchConfig.Name = "ens3";
+      networks."10-${config.server_base.networkInterface}" = {
+        matchConfig.Name = config.server_base.networkInterface;
 
         address = lib.mkIf (!config.server_base.useDHCP)
           [ (networkConfig.ip + "/" + toString networkConfig.prefixLength) ];

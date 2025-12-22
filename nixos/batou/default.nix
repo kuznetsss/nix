@@ -13,10 +13,14 @@ in lib.nixosSystem {
       server_base = {
         allowSshFromTailscale = false;
         useDHCP = true;
+        networkInterface = "enp4s0";
       };
       services.openssh.openFirewall = lib.mkForce true;
       zramSwap.enable =
         lib.mkForce false; # No need while RAM usage is below 75%
+
+      boot.loader.systemd-boot.enable = true;
+      boot.loader.efi.canTouchEfiVariables = true;
     }
 
     home-manager.nixosModules.home-manager
