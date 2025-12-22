@@ -23,7 +23,7 @@ in lib.nixosSystem {
       boot.loader.efi.canTouchEfiVariables = true;
     }
 
-    # ./miniflux.nix
+    ./miniflux.nix
     ./power.nix
 
     home-manager.nixosModules.home-manager
