@@ -24,8 +24,9 @@ in lib.nixosSystem {
 
       powerManagement.powertop.enable = true;
     }
+    ./powertop.nix
 
-    ./miniflux.nix
+    # ./miniflux.nix
 
     home-manager.nixosModules.home-manager
     (import ../../home/common/base.nix)
