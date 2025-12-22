@@ -21,7 +21,11 @@ in lib.nixosSystem {
 
       boot.loader.systemd-boot.enable = true;
       boot.loader.efi.canTouchEfiVariables = true;
+
+      powerManagement.powertop.enable = true;
     }
+
+    ./miniflux.nix
 
     home-manager.nixosModules.home-manager
     (import ../../home/common/base.nix)
