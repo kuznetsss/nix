@@ -25,6 +25,7 @@ in lib.nixosSystem {
 
     ./miniflux.nix
     ./power.nix
+    # ./vpn.nix
 
     home-manager.nixosModules.home-manager
     (import ../../home/common/base.nix)
