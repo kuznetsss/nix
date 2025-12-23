@@ -7,6 +7,7 @@
 
       # Enable SATA Aggressive Link Power Management
       SATA_LINKPWR_ON_AC = "med_power_with_dipm";
+      AHCI_RUNTIME_PM_TIMEOUT = 15;
 
       # Keep the CPU from boosting unnecessarily for background tasks
       CPU_BOOST_ON_AC = 0;
@@ -30,8 +31,6 @@
 
   # Force Runtime PM for everything that Powertop might miss
   services.udev.extraRules = ''
-    ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
-    ACTION=="add", SUBSYSTEM=="usb", ATTR{power/control}="auto"
     # Disable wake on lan
     ACTION=="add", SUBSYSTEM=="net", NAME=="eth*", RUN+="${pkgs.ethtool}/bin/ethtool -s $name wol d"
   '';
@@ -43,7 +42,6 @@
     "i915.enable_dc=2"
     "intel_idle.max_cstate=10" # Explicitly allow C10
     "vt.global_cursor_default=0" # Stop cursor wakeups
-    "pci=noaer" # Stop the 14W-19W spikes caused by error logging
   ];
   hardware.graphics = {
     enable = true;
@@ -52,9 +50,7 @@
       intel-compute-runtime # Optional, for OpenCL tasks
     ];
   };
-  systemd.tmpfiles.rules =
-    [ "w /sys/module/pcie_aspm/parameters/policy - - - - powersave" ];
-  environment.systemPackages = [ pkgs.powertop pkgs.pciutils ];
+  environment.systemPackages = with pkgs; [ powertop pciutils powerstat];
 
   boot.kernelModules = [ "r8125" ];
   boot.blacklistedKernelModules =
