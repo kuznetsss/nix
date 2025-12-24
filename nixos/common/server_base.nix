@@ -66,6 +66,7 @@ in {
         }];
 
         DHCP = lib.mkIf config.server_base.useDHCP "yes";
+        dhcpV4Config = lib.mkIf config.server_base.useDHCP { UseDNS = true; };
       };
     };
 
@@ -88,7 +89,7 @@ in {
         options = "--delete-older-than 3d";
       };
     };
-    environment.systemPackages = with pkgs; [ neovim htop git ];
+    environment.systemPackages = with pkgs; [ neovim htop git traceroute dig ];
 
     programs.zsh.enable = true;
 
