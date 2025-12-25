@@ -2,7 +2,7 @@
   programs.jujutsu.enable = true;
   home.file.".config/jjui/config.toml".text = ''
     [keys]
-    cancel = ["q"]
+    cancel = ["ctrl+q"]
     force_apply = ["ctrl+enter"]
 
     [ui.colors]

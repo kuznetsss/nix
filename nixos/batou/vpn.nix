@@ -1,88 +1,97 @@
-{ pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
-  vpnNamespace = "wg0-vpn";
   interfaceName = "wg0";
   configFile = "/etc/wireguard/wg0.conf";
   addressFile = "/etc/wireguard/wg0_address";
   dnsFile = "/etc/wireguard/wg0_dns";
 in {
-  systemd.services."netns-${vpnNamespace}" = {
-    description = "${vpnNamespace} network namespace";
-    before = [ "network.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStart = pkgs.writeShellScript "netns-up" ''
-        set -euo pipefail
-
-        ${pkgs.iproute2}/bin/ip netns add ${vpnNamespace}
-        ${pkgs.iproute2}/bin/ip netns exec ${vpnNamespace} \
-          ${pkgs.iproute2}/bin/ip link set lo up
-      '';
-      ExecStop = "${pkgs.iproute2}/bin/ip netns del ${vpnNamespace}";
-    };
+  options.vpnNamespace = lib.mkOption {
+    type = lib.types.str;
+    default = "wg0-vpn";
+    description = "VPN namespace name";
   };
+  config = {
+    systemd.services."netns-${config.vpnNamespace}" = {
+      description = "${config.vpnNamespace} network namespace";
+      before = [ "network.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = pkgs.writeShellScript "netns-up" ''
+          set -euo pipefail
 
-  systemd.services.wg0-setup = {
-    description = "WireGuard interface ${interfaceName} in ${vpnNamespace}";
-    requires = [ "netns-${vpnNamespace}.service" "network-online.target" ];
-    after = [ "netns-${vpnNamespace}.service" "network-online.target" ];
-    wantedBy = [ "multi-user.target" ];
+          ${pkgs.iproute2}/bin/ip netns add ${config.vpnNamespace}
+          ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} \
+            ${pkgs.iproute2}/bin/ip link set lo up
+        '';
+        ExecStop = "${pkgs.iproute2}/bin/ip netns del ${config.vpnNamespace}";
+      };
+    };
 
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStartPre = pkgs.writeShellScript "check-wg-config" ''
-        if [ ! -f ${configFile} ]; then
-          echo "Error: ${configFile} does not exist"
-          echo "Create the configuration file with your WireGuard settings."
-          exit 1
-        fi
-        if [ ! -f ${addressFile} ]; then
-          echo "Error: ${addressFile} does not exist"
-          echo "Create a file with your WireGuard addresses (comma-separated)."
-          exit 1
-        fi
-      '';
-      ExecStart = pkgs.writeShellScript "wg-up" ''
-        set -euo pipefail
+    systemd.services.wg0-setup = {
+      description =
+        "WireGuard interface ${interfaceName} in ${config.vpnNamespace}";
+      requires =
+        [ "netns-${config.vpnNamespace}.service" "network-online.target" ];
+      after =
+        [ "netns-${config.vpnNamespace}.service" "network-online.target" ];
+      wantedBy = [ "multi-user.target" ];
 
-          # Read Address and DNS from separate files
-          ADDRESSES=$(${pkgs.coreutils}/bin/cat ${addressFile} | ${pkgs.coreutils}/bin/tr -d ' \n')
-          DNS=$(${pkgs.coreutils}/bin/cat ${dnsFile} 2>/dev/null | ${pkgs.coreutils}/bin/tr -d ' \n' || true)
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStartPre = pkgs.writeShellScript "check-wg-config" ''
+          if [ ! -f ${configFile} ]; then
+            echo "Error: ${configFile} does not exist"
+            echo "Create the configuration file with your WireGuard settings."
+            exit 1
+          fi
+          if [ ! -f ${addressFile} ]; then
+            echo "Error: ${addressFile} does not exist"
+            echo "Create a file with your WireGuard addresses (comma-separated)."
+            exit 1
+          fi
+        '';
+        ExecStart = pkgs.writeShellScript "wg-up" ''
+          set -euo pipefail
 
-          # Create WireGuard interface in namespace
-          ${pkgs.iproute2}/bin/ip link add ${interfaceName} type wireguard
-          ${pkgs.iproute2}/bin/ip link set ${interfaceName} netns ${vpnNamespace}
+            # Read Address and DNS from separate files
+            ADDRESSES=$(${pkgs.coreutils}/bin/cat ${addressFile} | ${pkgs.coreutils}/bin/tr -d ' \n')
+            DNS=$(${pkgs.coreutils}/bin/cat ${dnsFile} 2>/dev/null | ${pkgs.coreutils}/bin/tr -d ' \n' || true)
 
-          # Configure interface in namespace (config should not have Address/DNS lines)
-          ${pkgs.iproute2}/bin/ip netns exec ${vpnNamespace} \
-            ${pkgs.wireguard-tools}/bin/wg setconf ${interfaceName} ${configFile}
+            # Create WireGuard interface in namespace
+            ${pkgs.iproute2}/bin/ip link add ${interfaceName} type wireguard
+            ${pkgs.iproute2}/bin/ip link set ${interfaceName} netns ${config.vpnNamespace}
 
-          # Add all addresses (comma-separated)
-          IFS=',' read -ra ADDR_ARRAY <<< "$ADDRESSES"
-          for addr in "''${ADDR_ARRAY[@]}"; do
-            ${pkgs.iproute2}/bin/ip netns exec ${vpnNamespace} \
-              ${pkgs.iproute2}/bin/ip addr add "$addr" dev ${interfaceName}
-          done
+            # Configure interface in namespace (config should not have Address/DNS lines)
+            ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} \
+              ${pkgs.wireguard-tools}/bin/wg setconf ${interfaceName} ${configFile}
 
-          ${pkgs.iproute2}/bin/ip netns exec ${vpnNamespace} \
-            ${pkgs.iproute2}/bin/ip link set ${interfaceName} up
+            # Add all addresses (comma-separated)
+            IFS=',' read -ra ADDR_ARRAY <<< "$ADDRESSES"
+            for addr in "''${ADDR_ARRAY[@]}"; do
+              ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} \
+                ${pkgs.iproute2}/bin/ip addr add "$addr" dev ${interfaceName}
+            done
 
-          # Add default route through interface
-          ${pkgs.iproute2}/bin/ip netns exec ${vpnNamespace} \
-            ${pkgs.iproute2}/bin/ip route add default dev ${interfaceName}
+            ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} \
+              ${pkgs.iproute2}/bin/ip link set ${interfaceName} up
 
-        # Set DNS in namespace if present
-        if [ -n "$DNS" ]; then
-          ${pkgs.coreutils}/bin/mkdir -p /etc/netns/${vpnNamespace}
-          echo "nameserver $DNS" > /etc/netns/${vpnNamespace}/resolv.conf
-        fi
-      '';
-      ExecStop = pkgs.writeShellScript "wg-down" ''
-        ${pkgs.iproute2}/bin/ip netns exec ${vpnNamespace} \
-          ${pkgs.iproute2}/bin/ip link del ${interfaceName}
-      '';
+            # Add default route through interface
+            ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} \
+              ${pkgs.iproute2}/bin/ip route add default dev ${interfaceName}
+
+          # Set DNS in namespace if present
+          if [ -n "$DNS" ]; then
+            ${pkgs.coreutils}/bin/mkdir -p /etc/netns/${config.vpnNamespace}
+            echo "nameserver $DNS" > /etc/netns/${config.vpnNamespace}/resolv.conf
+          fi
+        '';
+        ExecStop = pkgs.writeShellScript "wg-down" ''
+          ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} \
+            ${pkgs.iproute2}/bin/ip link del ${interfaceName}
+        '';
+      };
     };
   };
 }

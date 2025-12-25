@@ -27,6 +27,7 @@ in lib.nixosSystem {
     ./power.nix
     ./fan_control.nix
     ./vpn.nix
+    ./qbittorrent.nix
 
     home-manager.nixosModules.home-manager
     (import ../../home/common/base.nix)
