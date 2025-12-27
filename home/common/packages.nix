@@ -20,6 +20,8 @@
       nodejs # for github copilot
       gh
       gnupg
+      claude-code
+      claude-code-acp
 
       chatgpt-cli
 

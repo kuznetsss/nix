@@ -23,8 +23,25 @@ in {
           ${pkgs.iproute2}/bin/ip netns add ${config.vpnNamespace}
           ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} \
             ${pkgs.iproute2}/bin/ip link set lo up
+
+          # Setup firewall
+          ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} ${pkgs.iptables}/bin/iptables -P INPUT DROP
+          ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} ${pkgs.iptables}/bin/iptables -A INPUT -i lo -j ACCEPT
+          ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} ${pkgs.iptables}/bin/iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+
+          ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} ${pkgs.iptables}/bin/iptables -P FORWARD DROP
+
+          ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} ${pkgs.iptables}/bin/iptables -P OUTPUT DROP
+          ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} ${pkgs.iptables}/bin/iptables -A OUTPUT -o lo -j ACCEPT
+          ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} ${pkgs.iptables}/bin/iptables -A OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
         '';
-        ExecStop = "${pkgs.iproute2}/bin/ip netns del ${config.vpnNamespace}";
+        ExecStop = pkgs.writeShellScript "netns-down" ''
+          set -euo pipefail
+
+          ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} ${pkgs.iptables}/bin/iptables -X
+          ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} ${pkgs.iptables}/bin/iptables -F
+          ${pkgs.iproute2}/bin/ip netns del ${config.vpnNamespace}
+        '';
       };
     };
 
@@ -56,31 +73,31 @@ in {
         ExecStart = pkgs.writeShellScript "wg-up" ''
           set -euo pipefail
 
-            # Read Address and DNS from separate files
-            ADDRESSES=$(${pkgs.coreutils}/bin/cat ${addressFile} | ${pkgs.coreutils}/bin/tr -d ' \n')
-            DNS=$(${pkgs.coreutils}/bin/cat ${dnsFile} 2>/dev/null | ${pkgs.coreutils}/bin/tr -d ' \n' || true)
+          # Read Address and DNS from separate files
+          ADDRESSES=$(${pkgs.coreutils}/bin/cat ${addressFile} | ${pkgs.coreutils}/bin/tr -d ' \n')
+          DNS=$(${pkgs.coreutils}/bin/cat ${dnsFile} 2>/dev/null | ${pkgs.coreutils}/bin/tr -d ' \n' || true)
 
-            # Create WireGuard interface in namespace
-            ${pkgs.iproute2}/bin/ip link add ${interfaceName} type wireguard
-            ${pkgs.iproute2}/bin/ip link set ${interfaceName} netns ${config.vpnNamespace}
+          # Create WireGuard interface in namespace
+          ${pkgs.iproute2}/bin/ip link add ${interfaceName} type wireguard
+          ${pkgs.iproute2}/bin/ip link set ${interfaceName} netns ${config.vpnNamespace}
 
-            # Configure interface in namespace (config should not have Address/DNS lines)
+          # Configure interface in namespace (config should not have Address/DNS lines)
+          ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} \
+            ${pkgs.wireguard-tools}/bin/wg setconf ${interfaceName} ${configFile}
+
+          # Add all addresses (comma-separated)
+          IFS=',' read -ra ADDR_ARRAY <<< "$ADDRESSES"
+          for addr in "''${ADDR_ARRAY[@]}"; do
             ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} \
-              ${pkgs.wireguard-tools}/bin/wg setconf ${interfaceName} ${configFile}
+              ${pkgs.iproute2}/bin/ip addr add "$addr" dev ${interfaceName}
+          done
 
-            # Add all addresses (comma-separated)
-            IFS=',' read -ra ADDR_ARRAY <<< "$ADDRESSES"
-            for addr in "''${ADDR_ARRAY[@]}"; do
-              ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} \
-                ${pkgs.iproute2}/bin/ip addr add "$addr" dev ${interfaceName}
-            done
+          ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} \
+            ${pkgs.iproute2}/bin/ip link set ${interfaceName} up
 
-            ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} \
-              ${pkgs.iproute2}/bin/ip link set ${interfaceName} up
-
-            # Add default route through interface
-            ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} \
-              ${pkgs.iproute2}/bin/ip route add default dev ${interfaceName}
+          # Add default route through interface
+          ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} \
+            ${pkgs.iproute2}/bin/ip route add default dev ${interfaceName}
 
           # Set DNS in namespace if present
           if [ -n "$DNS" ]; then
@@ -96,4 +113,6 @@ in {
     };
   };
 }
+
+
 
