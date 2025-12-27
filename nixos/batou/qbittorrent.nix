@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 let
   webUIPort = 8080;
+  networkInterface = config.server_base.networkInterface;
 in {
   services.qbittorrent = {
     enable = true;
@@ -28,12 +29,14 @@ in {
     after = [ "qbittorrent.service" ];
     serviceConfig = {
       ExecStart =
-        "${pkgs.systemd}/lib/systemd/systemd-socket-proxyd --exit-idle-time=5min 127.0.0.1:${toString webUIPort}";
+        "${pkgs.systemd}/lib/systemd/systemd-socket-proxyd --exit-idle-time=5min 127.0.0.1:${
+          toString webUIPort
+        }";
       PrivateNetwork = true;
       NetworkNamespacePath = "/var/run/netns/${config.vpnNamespace}";
     };
   };
 
-  # Open firewall for web UI access
-  networking.firewall.allowedTCPPorts = [ webUIPort ];
+  networking.firewall.interfaces.${networkInterface}.allowedTCPPorts =
+    [ webUIPort ];
 }

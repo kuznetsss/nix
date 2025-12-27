@@ -47,10 +47,7 @@ in {
         enable = true;
         logRefusedConnections = false;
         allowPing = true;
-        extraCommands =
-          "iptables -A INPUT -i tailscale0 -p tcp -m tcp --dport ${
-            toString sshPort
-          } -j ACCEPT";
+        trustedInterfaces = [ "tailscale0" ];
       };
     };
 

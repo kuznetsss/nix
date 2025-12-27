@@ -35,6 +35,7 @@ in {
         [ "netns-${config.vpnNamespace}.service" "network-online.target" ];
       after =
         [ "netns-${config.vpnNamespace}.service" "network-online.target" ];
+      bindsTo = [ "netns-${config.vpnNamespace}.service" ];
       wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {

@@ -18,8 +18,6 @@ in {
     config.LISTEN_ADDR = "0.0.0.0:51234";
     adminCredentialsFile = config.age.secrets."batou/miniflux_admin".path;
   };
-  networking.firewall.interfaces = {
-    ${networkInterface}.allowedTCPPorts = [ 51234 ];
-    tailscale0.allowedTCPPorts = [ 51234 ];
-  };
+  networking.firewall.interfaces.${networkInterface}.allowedTCPPorts =
+    [ 51234 ];
 }
