@@ -104,6 +104,8 @@ in {
             ${pkgs.coreutils}/bin/mkdir -p /etc/netns/${config.vpnNamespace}
             echo "nameserver $DNS" > /etc/netns/${config.vpnNamespace}/resolv.conf
           fi
+
+          ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} ${pkgs.iptables}/bin/iptables -A OUTPUT -o ${interfaceName} -j ACCEPT
         '';
         ExecStop = pkgs.writeShellScript "wg-down" ''
           ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} \

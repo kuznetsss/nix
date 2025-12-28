@@ -1,7 +1,7 @@
-{ config, pkgs, ... }:
+{ config, pkgs, private, ... }:
 let
   webUIPort = 8080;
-  torrentingPort = 15378;
+  torrentingPort = private.network.batou.torrentingPort;
   networkInterface = config.server_base.networkInterface;
 in {
   services.qbittorrent = {
@@ -12,6 +12,7 @@ in {
 
   systemd.services."qbittorrent-firewall" = {
     after = [ "wg0-setup.service" ];
+    bindsTo = [ "wg0-setup.service" ];
     serviceConfig = {
       ExecStart = pkgs.writeShellScript "add-qbt-fw" ''
         ${pkgs.iproute2}/bin/ip netns exec ${config.vpnNamespace} ${pkgs.iptables}/bin/iptables -A INPUT -i wg0 -p tcp --dport ${
