@@ -24,6 +24,7 @@ jobs:
         host:
           - ivan
           - operator
+          - batou
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
