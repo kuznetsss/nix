@@ -120,7 +120,7 @@ in {
 
       turn_external_secret = (function()
         local secret_path = "${config.age.secrets."ivan/coturn_auth_key".path}"
-        local file = assert(io.open(secret_path, "r"))
+        local file = Lua.assert(Lua.io.open(secret_path, "r"))
         local data = file:read("*a")
         file:close()
         return data:gsub("^%s*(.-)%s*$", "%1")  -- trim whitespace
