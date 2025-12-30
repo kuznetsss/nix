@@ -71,30 +71,11 @@ in {
     };
   };
 
-  # Take torrentingPort on the main namespace
-  systemd.sockets.dummy-socket = {
-    description = "Dummy socket for port reservation";
-    wantedBy = [ "sockets.target" ];
-    listenStreams = [ "${toString torrentingPort}" ]; # TCP
-    listenDatagrams = [ "${toString torrentingPort}" ]; # UDP
-    socketConfig.Accept = false;
-  };
-
-  # Dummy service that does nothing (required by systemd)
-  systemd.services.dummy-socket = {
-    description = "Dummy service for port reservation";
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStart = "${pkgs.coreutils}/bin/true";
-    };
-  };
-
   networking.firewall = {
     interfaces.${networkInterface}.allowedTCPPorts = [ webUIPort ];
     extraCommands = ''
-      iptables -A OUTPUT -p tcp -o ${networkInterface} --sport ${torrentingPort} -j REJECT
-      iptables -A OUTPUT -p udp -o ${networkInterface} --sport ${torrentingPort} -j REJECT
+      iptables -A OUTPUT -o ${networkInterface} -m owner --uid-owner ${config.services.qbittorrent.user} -j REJECT --reject-with icmp-port-unreachable
+      ip6tables -A OUTPUT -o ${networkInterface} -m owner --uid-owner ${config.services.qbittorrent.user} -j REJECT --reject-with icmp6-port-unreachable
     '';
   };
 }

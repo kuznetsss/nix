@@ -9,7 +9,7 @@ in {
   options.vpn = {
     namespace = lib.mkOption {
       type = lib.types.str;
-      default = "wg0-vpn";
+      default = "wg0vpn";
       description = "VPN namespace name";
     };
     interface = lib.mkOption {
@@ -21,34 +21,48 @@ in {
   config = {
     systemd.services."netns@" = {
       description = "%I network namespace";
-      before = [ "network.target" ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        ExecStart = pkgs.writeShellScript "netns-up" ''
-          set -euo pipefail
+        ExecStart = "${
+            pkgs.writeShellScript "netns-up" ''
+              set -euo pipefail
+              NAMESPACE="$1"
 
-          ${pkgs.iproute2}/bin/ip netns add %I
-          ${pkgs.iproute2}/bin/ip netns exec %I ${pkgs.iproute2}/bin/ip link set lo up
+              ${pkgs.iproute2}/bin/ip netns add "$NAMESPACE"
+              ${pkgs.iproute2}/bin/ip netns exec "$NAMESPACE" ${pkgs.iproute2}/bin/ip link set lo up
 
-          # Setup firewall
-          ${pkgs.iproute2}/bin/ip netns exec %I ${pkgs.iptables}/bin/iptables -P INPUT DROP
-          ${pkgs.iproute2}/bin/ip netns exec %I ${pkgs.iptables}/bin/iptables -A INPUT -i lo -j ACCEPT
-          ${pkgs.iproute2}/bin/ip netns exec %I ${pkgs.iptables}/bin/iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+              # Disable IPv6 in namespace
+              ${pkgs.iproute2}/bin/ip netns exec "$NAMESPACE" ${pkgs.procps}/bin/sysctl -w net.ipv6.conf.all.disable_ipv6=1
+              ${pkgs.iproute2}/bin/ip netns exec "$NAMESPACE" ${pkgs.procps}/bin/sysctl -w net.ipv6.conf.default.disable_ipv6=1
 
-          ${pkgs.iproute2}/bin/ip netns exec %I ${pkgs.iptables}/bin/iptables -P FORWARD DROP
+              # Setup IPv4 firewall
+              ${pkgs.iproute2}/bin/ip netns exec "$NAMESPACE" ${pkgs.iptables}/bin/iptables -P INPUT DROP
+              ${pkgs.iproute2}/bin/ip netns exec "$NAMESPACE" ${pkgs.iptables}/bin/iptables -A INPUT -i lo -j ACCEPT
+              ${pkgs.iproute2}/bin/ip netns exec "$NAMESPACE" ${pkgs.iptables}/bin/iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 
-          ${pkgs.iproute2}/bin/ip netns exec %I ${pkgs.iptables}/bin/iptables -P OUTPUT DROP
-          ${pkgs.iproute2}/bin/ip netns exec %I ${pkgs.iptables}/bin/iptables -A OUTPUT -o lo -j ACCEPT
-          ${pkgs.iproute2}/bin/ip netns exec %I ${pkgs.iptables}/bin/iptables -A OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-        '';
-        ExecStop = pkgs.writeShellScript "netns-down" ''
-          set -euo pipefail
+              ${pkgs.iproute2}/bin/ip netns exec "$NAMESPACE" ${pkgs.iptables}/bin/iptables -P FORWARD DROP
 
-          ${pkgs.iproute2}/bin/ip netns exec %I ${pkgs.iptables}/bin/iptables -X
-          ${pkgs.iproute2}/bin/ip netns exec %I ${pkgs.iptables}/bin/iptables -F
-          ${pkgs.iproute2}/bin/ip netns del %I
-        '';
+              ${pkgs.iproute2}/bin/ip netns exec "$NAMESPACE" ${pkgs.iptables}/bin/iptables -P OUTPUT DROP
+              ${pkgs.iproute2}/bin/ip netns exec "$NAMESPACE" ${pkgs.iptables}/bin/iptables -A OUTPUT -o lo -j ACCEPT
+              ${pkgs.iproute2}/bin/ip netns exec "$NAMESPACE" ${pkgs.iptables}/bin/iptables -A OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+
+              # Setup IPv6 firewall (block everything as defense in depth)
+              ${pkgs.iproute2}/bin/ip netns exec "$NAMESPACE" ${pkgs.iptables}/bin/ip6tables -P INPUT DROP
+              ${pkgs.iproute2}/bin/ip netns exec "$NAMESPACE" ${pkgs.iptables}/bin/ip6tables -P FORWARD DROP
+              ${pkgs.iproute2}/bin/ip netns exec "$NAMESPACE" ${pkgs.iptables}/bin/ip6tables -P OUTPUT DROP
+            ''
+          } %I";
+        ExecStop = "${
+            pkgs.writeShellScript "netns-down" ''
+              set -euo pipefail
+              NAMESPACE="$1"
+
+              ${pkgs.iproute2}/bin/ip netns exec "$NAMESPACE" ${pkgs.iptables}/bin/iptables -X
+              ${pkgs.iproute2}/bin/ip netns exec "$NAMESPACE" ${pkgs.iptables}/bin/iptables -F
+              ${pkgs.iproute2}/bin/ip netns del "$NAMESPACE"
+            ''
+          } %I";
       };
     };
 

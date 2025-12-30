@@ -21,6 +21,9 @@ in lib.nixosSystem {
 
       boot.loader.systemd-boot.enable = true;
       boot.loader.efi.canTouchEfiVariables = true;
+
+      # Disable IPv6 on host
+      networking.enableIPv6 = false;
     }
 
     ./miniflux.nix
@@ -33,3 +36,4 @@ in lib.nixosSystem {
     (import ../../home/common/base.nix)
   ];
 }
+
