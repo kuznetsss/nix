@@ -123,3 +123,11 @@ jobs:
           # Delete the branch
           git push origin --delete "$BRANCH_NAME"
           echo "✅ Successfully merged and deleted branch $BRANCH_NAME"
+
+  sync-deploy:
+    name: Sync to deploy branch
+    needs: [update-flake, verify-update, merge_branch_on_success]
+    if: needs.update-flake.outputs.updated == 'true' && needs.verify-update.result == 'success'
+    uses: ./.github/workflows/sync-deploy.yml
+    secrets: inherit
+
