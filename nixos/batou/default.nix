@@ -30,6 +30,7 @@ in lib.nixosSystem {
     ./power.nix
     ./fan_control.nix
     ./vpn.nix
+    ./jellyfin.nix
 
     home-manager.nixosModules.home-manager
     (import ../../home/common/base.nix)
