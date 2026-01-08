@@ -78,6 +78,7 @@ in {
         Type = "oneshot";
         RemainAfterExit = true;
         ExecStartPre = pkgs.writeShellScript "check-wg-config" ''
+          set -euo pipefail
           if [ ! -f ${configFile} ]; then
             echo "Error: ${configFile} does not exist"
             echo "Create the configuration file with your WireGuard settings."

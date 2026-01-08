@@ -42,6 +42,7 @@ in {
     services.journald.extraConfig = "SystemMaxUse=2G";
 
     networking = {
+      useNetworkd = true;
       useDHCP = lib.mkForce false;
       firewall = {
         enable = true;

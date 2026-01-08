@@ -12,17 +12,6 @@ in {
     wg3 = {
       ips = [ "10.0.30.1/24" ];
       listenPort = wg3Port;
-      postSetup = ''
-        ${pkgs.iptables}/bin/iptables -A FORWARD -i wg3 -j ACCEPT
-        ${pkgs.iptables}/bin/iptables -A FORWARD -o ens3 -j ACCEPT
-        ${pkgs.iptables}/bin/iptables -t nat -I POSTROUTING 1 -s 10.0.30.0/24 -o ens3 -j MASQUERADE
-      '';
-
-      postShutdown = ''
-        ${pkgs.iptables}/bin/iptables -D FORWARD -i wg3 -j ACCEPT
-        ${pkgs.iptables}/bin/iptables -D FORWARD -o ens3 -j ACCEPT
-        ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -s 10.0.30.0/24 -o ens3 -j MASQUERADE
-      '';
 
       # publicKey Nw9zxT3UPs5KNuXTQ/7aq0eXrYaCj0I+CIqqYJsxKQU=
       privateKeyFile = config.age.secrets."ivan/wg3_private_key".path;
@@ -51,4 +40,19 @@ in {
       ];
     };
   };
+
+  # With networkd, use systemd service hooks instead of postSetup/postShutdown
+  systemd.services."wireguard-wg3" = {
+    postStart = ''
+      ${pkgs.iptables}/bin/iptables -A FORWARD -i wg3 -j ACCEPT
+      ${pkgs.iptables}/bin/iptables -A FORWARD -o ens3 -j ACCEPT
+      ${pkgs.iptables}/bin/iptables -t nat -I POSTROUTING 1 -s 10.0.30.0/24 -o ens3 -j MASQUERADE
+    '';
+    postStop = ''
+      ${pkgs.iptables}/bin/iptables -D FORWARD -i wg3 -j ACCEPT || true
+      ${pkgs.iptables}/bin/iptables -D FORWARD -o ens3 -j ACCEPT || true
+      ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -s 10.0.30.0/24 -o ens3 -j MASQUERADE || true
+    '';
+  };
 }
+

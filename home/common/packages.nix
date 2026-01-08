@@ -15,7 +15,6 @@
       stylua
       ripgrep
       lazygit
-      lazyjj
       jjui
       nodejs # for github copilot
       gh
@@ -27,7 +26,7 @@
 
       nix
       nixd
-      nixfmt-classic
+      nixfmt
       statix
       nvd
 
