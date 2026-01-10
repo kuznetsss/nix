@@ -7,6 +7,8 @@
         name = "wg3_private_key";
       };
       mode = "0440";
+      owner = "systemd-network";
+      group = "systemd-network";
     };
 
     "ivan/coturn_auth_key" = {
