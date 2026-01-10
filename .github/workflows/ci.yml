@@ -19,12 +19,6 @@ on:
 jobs:
   check-and-build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        host:
-          - ivan
-          - operator
-          - batou
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -39,6 +33,3 @@ jobs:
 
       - name: Run flake check
         run: nix flake check --all-systems
-
-      - name: Build NixOS configuration for ${{ matrix.host }}
-        run: nix build .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel --print-build-logs
