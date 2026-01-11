@@ -87,7 +87,7 @@ in {
         options = "--delete-older-than 3d";
       };
     };
-    environment.systemPackages = with pkgs; [ neovim htop git traceroute dig ];
+    environment.systemPackages = with pkgs; [ neovim htop git traceroute dig iftop wireguard-tools];
 
     programs.zsh.enable = true;
 

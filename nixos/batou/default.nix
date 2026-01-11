@@ -11,6 +11,7 @@ in lib.nixosSystem {
     {
       networking.hostName = "batou";
       server_base = {
+        autoupdate.enable = false;
         allowSshFromTailscale = false;
         useDHCP = true;
         networkInterface = "enp4s0";
@@ -24,6 +25,7 @@ in lib.nixosSystem {
 
       # Disable IPv6 on host
       networking.enableIPv6 = false;
+      hardware.enableRedistributableFirmware = true;
     }
 
     ./miniflux.nix

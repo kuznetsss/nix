@@ -43,13 +43,6 @@
     "intel_idle.max_cstate=10" # Explicitly allow C10
     "vt.global_cursor_default=0" # Stop cursor wakeups
   ];
-  hardware.graphics = {
-    enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver # Required for modern QuickSync (i3-12100)
-      intel-compute-runtime # Optional, for OpenCL tasks
-    ];
-  };
   environment.systemPackages = with pkgs; [ powertop pciutils powerstat];
 
   boot.kernelModules = [ "r8125" ];
