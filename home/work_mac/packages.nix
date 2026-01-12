@@ -2,8 +2,17 @@
   home.packages = with pkgs; [
     awscli2
     ssm-session-manager-plugin
+    ansible
+    ansible-lint
+    yaml-language-server
+    _1password-cli
+    claude-code
+    claude-code-acp
+    sshfs
+    fuse
 
-    llvmPackages_19.clang-tools
+    conan
+    llvmPackages_20.clang-tools
     lldb
     gcovr
     cmake-language-server
@@ -18,15 +27,8 @@
 
     netcat-gnu
 
-    python313Full
-    python313Packages.virtualenv
-    # python311Packages.python-lsp-server
-    # python311Packages.black
-    # python311Packages.flake8
-    # python311Packages.mccabe
-    # python311Packages.pylsp-rope
-    # python311Packages.python-lsp-black
-    # python311Packages.matplotlib
+    python3
+    python3Packages.virtualenv
     pre-commit
 
     jq

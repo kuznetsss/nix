@@ -9,6 +9,7 @@ in home-manager.lib.homeManagerConfiguration {
       home.username = "skuznetsov";
       home.homeDirectory = /Users/skuznetsov;
       home.stateVersion = "25.11";
+      nixpkgs.config = { allowUnfree = true; };
       programs = {
         home-manager.enable = true;
         direnv = {
@@ -22,6 +23,7 @@ in home-manager.lib.homeManagerConfiguration {
     ./../common/wezterm.nix
     ./../common/zsh.nix
     ./../common/packages.nix
+    ./../common/jujutsu.nix
     ./packages.nix
   ];
 }
