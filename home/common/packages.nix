@@ -1,12 +1,13 @@
-{ pkgs, ... }: {
-  home.packages = with pkgs;
+{ pkgs, ... }:
+{
+  home.packages =
+    with pkgs;
     [
       neovim
 
       # development
       nodePackages.cspell
       zk
-      rumdl
       yamllint
       yaml-language-server
       lua-language-server
@@ -47,5 +48,15 @@
       yazi
 
       nethack
-    ] ++ (if pkgs.stdenv.isDarwin then [ iproute2mac darwin.trash ] else [ ]);
+      spotify-player
+    ]
+    ++ (
+      if pkgs.stdenv.isDarwin then
+        [
+          iproute2mac
+          darwin.trash
+        ]
+      else
+        [ ]
+    );
 }
