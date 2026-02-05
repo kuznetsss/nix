@@ -29,7 +29,7 @@
 
     python3
     python3Packages.virtualenv
-    pre-commit
+    prek
 
     jq
     tree
