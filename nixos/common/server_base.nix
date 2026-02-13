@@ -83,7 +83,7 @@ in {
       settings.experimental-features = [ "nix-command" "flakes" ];
       gc = {
         automatic = true;
-        dates = "weekly";
+        dates = "daily";
         options = "--delete-older-than 3d";
       };
     };

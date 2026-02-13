@@ -1,4 +1,11 @@
-{ nixpkgs, home-manager, private, disko, agenix, ... }:
+{
+  nixpkgs,
+  home-manager,
+  private,
+  disko,
+  agenix,
+  ...
+}:
 nixpkgs.lib.nixosSystem {
   specialArgs = { inherit private agenix; };
   modules = [
@@ -7,7 +14,10 @@ nixpkgs.lib.nixosSystem {
     ./hardware-configuration.nix
 
     ../common/server_base.nix
-    { networking.hostName = "operator"; }
+    {
+      networking.hostName = "operator";
+      system.autoUpgrade.runGarbageCollection = true;
+    }
 
     home-manager.nixosModules.home-manager
     (import ../../home/common/base.nix)
