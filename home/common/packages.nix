@@ -6,6 +6,7 @@
       neovim
 
       # development
+      tree-sitter
       nodePackages.cspell
       zk
       yamllint
