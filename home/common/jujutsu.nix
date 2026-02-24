@@ -1,20 +1,6 @@
-{ pkgs, ... }:
+{ ... }:
 {
   programs.jujutsu.enable = true;
-
-  nixpkgs.overlays = [
-    (final: prev: {
-      jjui = prev.jjui.overrideAttrs (oldAttrs: {
-        src = prev.fetchFromGitHub {
-          owner = "idursun";
-          repo = "jjui";
-          rev = "83468d014564e5824b7ccf869e0b2309ae7b065c";
-          hash = "sha256-CBNMoVALCLWQ9bsrQilnx8djLufLNt8p9iK+HnpUPgc=";
-        };
-        doCheck = false;
-      });
-    })
-  ];
 
   home.file = {
     ".config/jjui/config.toml".text = ''
