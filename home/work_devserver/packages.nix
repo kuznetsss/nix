@@ -1,6 +1,6 @@
 { pkgs, ... }: {
   home.packages = with pkgs; [
-    llvmPackages_19.clang-tools
+    llvmPackages_21.clang-tools
     lldb
     gcovr
     cmake-language-server
@@ -15,8 +15,8 @@
 
     netcat-gnu
 
-    python313Full
-    python313Packages.virtualenv
+    python314
+    python314Packages.virtualenv
     # python311Packages.python-lsp-server
     # python311Packages.black
     # python311Packages.flake8

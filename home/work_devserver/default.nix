@@ -1,8 +1,16 @@
-{ home-manager, nixpkgs, util, }:
+{
+  home-manager,
+  nixpkgs,
+  util,
+}:
 let
   system = util.system.x86_64-linux;
-  pkgs = nixpkgs.legacyPackages.${system};
-in home-manager.lib.homeManagerConfiguration {
+  pkgs = import nixpkgs {
+    inherit system;
+    config.allowUnfree = true;
+  };
+in
+home-manager.lib.homeManagerConfiguration {
   inherit pkgs;
   modules = [
     {
@@ -12,14 +20,15 @@ in home-manager.lib.homeManagerConfiguration {
       programs.home-manager.enable = true;
 
       services.ssh-agent.enable = true;
-      programs.ssh.addKeysToAgent = "yes";
+      # programs.ssh.addKeysToAgent = "yes";
       services.gpg-agent.enable = true;
-      services.gpg-agent.pinentryPackage = pkgs.pinentry-tty;
+      services.gpg-agent.pinentry.package = pkgs.pinentry-tty;
     }
     ./../common/tmux.nix
     ./../common/wezterm.nix
     ./../common/zsh.nix
     ./../common/packages.nix
+    ./../common/jujutsu.nix
     ./packages.nix
   ];
 }
