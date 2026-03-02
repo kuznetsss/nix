@@ -18,18 +18,14 @@
       ripgrep
       lazygit
       jjui
-      nodejs # for github copilot
       gh
       gnupg
       claude-code
       claude-code-acp
 
-      chatgpt-cli
-
       nix
       nixd
       nixfmt
-      statix
       nvd
 
       go
