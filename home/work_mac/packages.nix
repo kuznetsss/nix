@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   home.packages = with pkgs; [
     awscli2
     ssm-session-manager-plugin
@@ -6,8 +7,6 @@
     ansible-lint
     yaml-language-server
     _1password-cli
-    claude-code
-    claude-code-acp
     sshfs
     fuse
 
