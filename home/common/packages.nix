@@ -1,18 +1,18 @@
 { pkgs, ... }:
 let
   claude-code-acp-latest = pkgs.claude-code-acp.overrideAttrs (old: rec {
-    version = "0.20.2";
+    version = "0.21.0";
 
     src = pkgs.fetchFromGitHub {
       owner = "zed-industries";
       repo = "claude-agent-acp";
-      tag = "v0.20.2";
-      hash = "sha256-0Oovlv7mkU0BqsNM7RFv5Be+umpmYy29bdmCuQcUheE=";
+      tag = "v0.21.0";
+      hash = "sha256-6c6bHuso3diW5ZfHiM2xcxGDTNG0LIL0TZd0MFVpW/E=";
     };
 
     npmDeps = pkgs.fetchNpmDeps {
       inherit src;
-      hash = "sha256-DjkQUcx/osL+ZBJF7hOQT3qWlaKkB91VelJxReKbOO4=";
+      hash = "sha256-UtiIcjgNCYMFrRpO5AlUbOyutJ3ipwIbcpMi2BqawEk=";
     };
   });
 in
