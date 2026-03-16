@@ -1,10 +1,23 @@
-{ config, pkgs, private, ... }:
+{
+  config,
+  pkgs,
+  private,
+  ...
+}:
 let
   network_config = private.network.ivan;
   domain = network_config.domain;
-in {
-  users.users.prosody.extraGroups = [ "acme" "turnserver" "nginx" ];
-  users.users.turnserver.extraGroups = [ "acme" "nginx" ];
+in
+{
+  users.users.prosody.extraGroups = [
+    "acme"
+    "turnserver"
+    "nginx"
+  ];
+  users.users.turnserver.extraGroups = [
+    "acme"
+    "nginx"
+  ];
 
   security.acme = {
     acceptTerms = true;
@@ -30,7 +43,9 @@ in {
       "${domain}" = {
         enableACME = true;
         forceSSL = true;
-        locations."/" = { return = "403"; };
+        locations."/" = {
+          return = "403";
+        };
       };
     };
   };
@@ -52,10 +67,12 @@ in {
       config.services.coturn.listening-port
       config.services.coturn.tls-listening-port
     ];
-    allowedUDPPortRanges = [{
-      from = config.services.coturn.min-port;
-      to = config.services.coturn.max-port;
-    }];
+    allowedUDPPortRanges = [
+      {
+        from = config.services.coturn.min-port;
+        to = config.services.coturn.max-port;
+      }
+    ];
   };
 
   services.prosody = {
@@ -77,7 +94,9 @@ in {
     ssl = {
       cert = "/var/lib/acme/${domain}/fullchain.pem";
       key = "/var/lib/acme/${domain}/key.pem";
-      extraOptions = { protocol = "tlsv1_3"; };
+      extraOptions = {
+        protocol = "tlsv1_3";
+      };
     };
     virtualHosts."${domain}" = {
       enabled = true;
@@ -90,8 +109,12 @@ in {
         { levels = { min = "info" }, to = "file", filename = "/var/lib/prosody/log" },
       }
     '';
-    muc = [{ domain = "conference.${domain}"; }];
-    httpFileShare = { domain = "upload.${domain}"; };
+    muc = [ { domain = "conference.${domain}"; } ];
+    httpFileShare = {
+      domain = "upload.${domain}";
+      size_limit = 100 * 1024 * 1024;
+      expires_after = "3d";
+    };
     modules = {
       csi = false;
       groups = true;
@@ -106,8 +129,6 @@ in {
       certificates = '/var/lib/acme/${domain}'
       groups_file = '/var/lib/prosody/groups.txt'
       archive_expires_after = "3d"
-      http_file_share_expires_after = 3*24*60*60;
-      http_file_share_size_limit = 100 * 1024 * 1024
       network_settings = { tcp_fastopen = 256; }
       storage = "sql"
       sql = { driver = "SQLite3", database = "prosody.sqlite" }
@@ -138,8 +159,7 @@ in {
     # tls-listening-port = 50002;
     # min-port = 50004;
     # max-port = 51000;
-    static-auth-secret-file =
-      "${config.age.secrets."ivan/coturn_auth_key".path}";
+    static-auth-secret-file = "${config.age.secrets."ivan/coturn_auth_key".path}";
     # static-auth-secret = "${coturn_auth_key}";
     use-auth-secret = true;
     listening-ips = [ "${network_config.ip}" ];
@@ -182,19 +202,23 @@ in {
 
   environment.etc = {
     "fail2ban/filter.d/prosody-auth.local" = {
-      text = pkgs.lib.mkDefault (pkgs.lib.mkAfter ''
-        [Definition]
-        failregex = Failed authentication attempt \(not-authorized\) for user .* from IP: <HOST>
-        ignoreregex =
-      '');
+      text = pkgs.lib.mkDefault (
+        pkgs.lib.mkAfter ''
+          [Definition]
+          failregex = Failed authentication attempt \(not-authorized\) for user .* from IP: <HOST>
+          ignoreregex =
+        ''
+      );
       mode = "0444";
     };
     "fail2ban/filter.d/nginx-4xx.local" = {
-      text = pkgs.lib.mkDefault (pkgs.lib.mkAfter ''
-        [Definition]
-        failregex = ^<HOST>.*" (404|444|403|400) .*$
-        ignoreregex =
-      '');
+      text = pkgs.lib.mkDefault (
+        pkgs.lib.mkAfter ''
+          [Definition]
+          failregex = ^<HOST>.*" (404|444|403|400) .*$
+          ignoreregex =
+        ''
+      );
       mode = "0444";
     };
   };
@@ -228,5 +252,3 @@ in {
   };
 
 }
-
-
