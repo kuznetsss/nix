@@ -1,15 +1,22 @@
-{ home-manager, nixpkgs, util, }:
+{
+  home-manager,
+  nixpkgs,
+  util,
+}:
 let
   system = util.system.aarch64-darwin;
   pkgs = nixpkgs.legacyPackages.${system};
-in home-manager.lib.homeManagerConfiguration {
+in
+home-manager.lib.homeManagerConfiguration {
   inherit pkgs;
   modules = [
     {
       home.username = "skuznetsov";
       home.homeDirectory = /Users/skuznetsov;
       home.stateVersion = "25.11";
-      nixpkgs.config = { allowUnfree = true; };
+      nixpkgs.config = {
+        allowUnfree = true;
+      };
       programs = {
         home-manager.enable = true;
         direnv = {

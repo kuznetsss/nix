@@ -1,18 +1,18 @@
 { pkgs, ... }:
 let
-  claude-code-acp-latest = pkgs.claude-code-acp.overrideAttrs (old: rec {
-    version = "0.21.0";
+  claude-agent-acp-latest = pkgs.claude-agent-acp.overrideAttrs (old: rec {
+    version = "0.24.2";
 
     src = pkgs.fetchFromGitHub {
       owner = "zed-industries";
       repo = "claude-agent-acp";
-      tag = "v0.21.0";
-      hash = "sha256-6c6bHuso3diW5ZfHiM2xcxGDTNG0LIL0TZd0MFVpW/E=";
+      tag = "v0.24.2";
+      hash = "sha256-SRVbLcGrH5pJt6yfM0ObSso68M+yGateIVYf/kFVDhE=";
     };
 
     npmDeps = pkgs.fetchNpmDeps {
       inherit src;
-      hash = "sha256-UtiIcjgNCYMFrRpO5AlUbOyutJ3ipwIbcpMi2BqawEk=";
+      hash = "sha256-V5lBQNhpL+/Mok9bEVSOrrHSv9B9pXKJswcXW+QDnAs=";
     };
   });
 in
@@ -24,7 +24,7 @@ in
 
       # development
       tree-sitter
-      nodePackages.cspell
+      cspell
       zk
       yamllint
       yaml-language-server
@@ -37,8 +37,8 @@ in
       jjui
       gh
       gnupg
-      # claude-code
-      claude-code-acp-latest
+      claude-code
+      claude-agent-acp-latest
 
       nix
       nixd
