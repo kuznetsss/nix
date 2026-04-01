@@ -4,7 +4,7 @@ let
     version = "0.24.2";
 
     src = pkgs.fetchFromGitHub {
-      owner = "zed-industries";
+      owner = "agentclientprotocol";
       repo = "claude-agent-acp";
       tag = "v0.24.2";
       hash = "sha256-SRVbLcGrH5pJt6yfM0ObSso68M+yGateIVYf/kFVDhE=";
@@ -37,7 +37,7 @@ in
       jjui
       gh
       gnupg
-      claude-code
+      #claude-code
       claude-agent-acp-latest
 
       nix
