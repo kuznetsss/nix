@@ -37,7 +37,7 @@ in
       jjui
       gh
       gnupg
-      #claude-code
+      claude-code
       claude-agent-acp-latest
 
       nix
