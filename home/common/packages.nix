@@ -1,18 +1,18 @@
 { pkgs, ... }:
 let
   claude-agent-acp-latest = pkgs.claude-agent-acp.overrideAttrs (old: rec {
-    version = "0.24.2";
+    version = "0.29.2";
 
     src = pkgs.fetchFromGitHub {
       owner = "agentclientprotocol";
       repo = "claude-agent-acp";
-      tag = "v0.24.2";
-      hash = "sha256-SRVbLcGrH5pJt6yfM0ObSso68M+yGateIVYf/kFVDhE=";
+      tag = "v0.29.2";
+      hash = "sha256-YWmsYjIHxg4PLS9Pns6ZuwlBm2SD+1lp5FwIGC2/AeM=";
     };
 
     npmDeps = pkgs.fetchNpmDeps {
       inherit src;
-      hash = "sha256-V5lBQNhpL+/Mok9bEVSOrrHSv9B9pXKJswcXW+QDnAs=";
+      hash = "sha256-MAWvqEmWn+Y0Bgy2qBGUzdnjtsWBYVxdM3cSPIgDXMg=";
     };
   });
 in
