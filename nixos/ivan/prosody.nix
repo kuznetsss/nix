@@ -30,6 +30,10 @@ in
           "pubsub.${domain}"
           "upload.${domain}"
         ];
+        reloadServices = [
+          "prosody.service"
+          "coturn.service"
+        ];
       };
     };
   };
