@@ -69,6 +69,7 @@ in
   programs.starship = {
     enable = true;
     enableZshIntegration = true;
+    extraPackages = [ pkgs.starship-jj ];
     settings = {
       character = {
         success_symbol = "[➜](bold green)";
@@ -77,6 +78,20 @@ in
       };
       directory = {
         truncate_to_repo = false;
+      };
+      custom = {
+        jj = {
+          command = "prompt";
+          format = "$output";
+          ignore_timeout = true;
+          shell = [
+            "starship-jj"
+            "--ignore-working-copy"
+            "starship"
+          ];
+          use_stdin = false;
+          when = true;
+        };
       };
     };
   };
