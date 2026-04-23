@@ -68,7 +68,7 @@ in
 
   programs.starship =
     let
-      addStarshipJJ = (!lib.hasPrefix "25.11" pkgs.lib.version);
+      addStarshipJJ = pkgs ? starship-jj;
     in
     lib.mkMerge [
       {
@@ -78,14 +78,14 @@ in
           character = {
             success_symbol = "[➜](bold green)";
             error_symbol = "[✖ ➜](bold red)";
-            vimcmd_symbol = "[](bold green)";
+            vimcmd_symbol = "[](bold green)";
           };
           directory = {
             truncate_to_repo = false;
           };
         };
       }
-      (lib.mkIf addStarshipJJ {
+      (lib.optionalAttrs addStarshipJJ {
         extraPackages = [ pkgs.starship-jj ];
         settings = {
           custom = {
