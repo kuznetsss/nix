@@ -70,35 +70,41 @@ in
     let
       addStarshipJJ = (!lib.hasPrefix "25.11" pkgs.lib.version);
     in
-    {
-      enable = true;
-      enableZshIntegration = true;
-      extraPackages = lib.optionals addStarshipJJ [ pkgs.starship-jj ];
-      settings = {
-        character = {
-          success_symbol = "[➜](bold green)";
-          error_symbol = "[✖ ➜](bold red)";
-          vimcmd_symbol = "[](bold green)";
-        };
-        directory = {
-          truncate_to_repo = false;
-        };
-        custom = lib.optionalAttrs addStarshipJJ {
-          jj = {
-            command = "prompt";
-            format = "$output";
-            ignore_timeout = true;
-            shell = [
-              "starship-jj"
-              "--ignore-working-copy"
-              "starship"
-            ];
-            use_stdin = false;
-            when = true;
+    lib.mkMerge [
+      {
+        enable = true;
+        enableZshIntegration = true;
+        settings = {
+          character = {
+            success_symbol = "[➜](bold green)";
+            error_symbol = "[✖ ➜](bold red)";
+            vimcmd_symbol = "[](bold green)";
+          };
+          directory = {
+            truncate_to_repo = false;
           };
         };
-      };
-    };
+      }
+      (lib.mkIf addStarshipJJ {
+        extraPackages = [ pkgs.starship-jj ];
+        settings = {
+          custom = {
+            jj = {
+              command = "prompt";
+              format = "$output";
+              ignore_timeout = true;
+              shell = [
+                "starship-jj"
+                "--ignore-working-copy"
+                "starship"
+              ];
+              use_stdin = false;
+              when = true;
+            };
+          };
+        };
+      })
+    ];
 
   programs.zoxide = {
     enable = true;
