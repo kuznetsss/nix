@@ -14,6 +14,7 @@ in home-manager.lib.homeManagerConfiguration {
       home.stateVersion = "25.11";
       programs.home-manager.enable = true;
     }
+    ./../common/diff_on_activation.nix
     ./../common/tmux.nix
     ./../common/jujutsu.nix
     ./../common/wezterm.nix

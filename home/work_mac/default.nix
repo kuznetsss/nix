@@ -26,6 +26,7 @@ home-manager.lib.homeManagerConfiguration {
         };
       };
     }
+    ./../common/diff_on_activation.nix
     ./../common/tmux.nix
     ./../common/wezterm.nix
     ./../common/zsh.nix
