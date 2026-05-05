@@ -41,8 +41,8 @@ jobs:
 
   create_PR_on_failure:
     name: Create PR on failure
-    needs: verify-main
-    if: needs.verify-main.result != 'success' && always()
+    needs: [verify-main, sync-to-deploy]
+    if: always() && needs.sync-to-deploy.result != 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -52,7 +52,7 @@ jobs:
 
       - name: Create PR
         env:
-          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr create \
             --base deploy \
