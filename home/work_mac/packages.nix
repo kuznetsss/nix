@@ -16,7 +16,7 @@
     gcovr
     cmake-language-server
     cmake
-    cmake-format
+    gersemi
     ninja
     ccache
     git-lfs
