@@ -13,7 +13,7 @@ home-manager.lib.homeManagerConfiguration {
     {
       home.username = "skuznetsov";
       home.homeDirectory = /Users/skuznetsov;
-      home.stateVersion = "25.11";
+      home.stateVersion = "26.05";
       nixpkgs.config = {
         allowUnfree = true;
       };

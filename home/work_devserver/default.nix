@@ -16,7 +16,7 @@ home-manager.lib.homeManagerConfiguration {
     {
       home.username = "skuznetsov";
       home.homeDirectory = /home/skuznetsov;
-      home.stateVersion = "25.11";
+      home.stateVersion = "26.05";
       programs.home-manager.enable = true;
 
       services.ssh-agent.enable = true;

@@ -11,7 +11,7 @@ in home-manager.lib.homeManagerConfiguration {
     {
       home.username = "sergey";
       home.homeDirectory = /Users/sergey;
-      home.stateVersion = "25.11";
+      home.stateVersion = "26.05";
       programs.home-manager.enable = true;
     }
     ./../common/diff_on_activation.nix
