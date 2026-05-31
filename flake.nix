@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -11,7 +11,7 @@
     };
 
     home-manager-stable = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 
@@ -28,12 +28,22 @@
     };
   };
 
-  outputs = { nixpkgs, nixpkgs-stable, home-manager, home-manager-stable, agenix
-    , disko, private-part, ... }:
+  outputs =
+    {
+      nixpkgs,
+      nixpkgs-stable,
+      home-manager,
+      home-manager-stable,
+      agenix,
+      disko,
+      private-part,
+      ...
+    }:
     let
       util = import ./util { inherit nixpkgs; };
       private = import private-part;
-    in {
+    in
+    {
       homeConfigurations = import ./home { inherit nixpkgs home-manager util; };
 
       nixosConfigurations = import ./nixos {
@@ -42,8 +52,7 @@
         inherit agenix private disko;
       };
 
-      formatter =
-        util.forEachSystem (system: nixpkgs.legacyPackages.${system}.nixfmt);
+      formatter = util.forEachSystem (system: nixpkgs.legacyPackages.${system}.nixfmt);
 
       apps = import ./apps.nix { inherit nixpkgs; };
     };

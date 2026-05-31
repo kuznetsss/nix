@@ -1,6 +1,6 @@
-{ pkgs, ... }: {
-  boot.kernelModules =
-    [ "nct6775" ]; # Needs to access pwm devices on Asus motherboards
+{ pkgs, ... }:
+{
+  boot.kernelModules = [ "nct6775" ]; # Needs to access pwm devices on Asus motherboards
   environment.systemPackages = [ pkgs.lm_sensors ];
   hardware.fancontrol = {
     enable = false; # Let bios handle it for now

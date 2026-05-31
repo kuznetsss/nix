@@ -1,10 +1,16 @@
-{ config, pkgs, private, ... }:
+{
+  config,
+  pkgs,
+  private,
+  ...
+}:
 let
   hostName = config.networking.hostName;
   networkConfig = private.network.${hostName};
   sshPort = private.ssh.port;
   lib = pkgs.lib;
-in {
+in
+{
   imports = [ ../common/autoupdate.nix ];
 
   options = {
@@ -17,8 +23,7 @@ in {
     server_base.useDHCP = lib.mkOption {
       type = lib.types.bool;
       default = false;
-      description =
-        "Whether to use DHCP. If not enabled static config will be taken from private";
+      description = "Whether to use DHCP. If not enabled static config will be taken from private";
     };
 
     server_base.networkInterface = lib.mkOption {
@@ -29,13 +34,15 @@ in {
   };
 
   config = {
-    assertions = [{
-      assertion = config.networking.hostName != "nixos";
-      message = ''
-        networking.hostName must be set to use server_base.nix
-        Add { networking.hostName = "some_hostname"; } in your system configuration.
-      '';
-    }];
+    assertions = [
+      {
+        assertion = config.networking.hostName != "nixos";
+        message = ''
+          networking.hostName must be set to use server_base.nix
+          Add { networking.hostName = "some_hostname"; } in your system configuration.
+        '';
+      }
+    ];
 
     time.timeZone = lib.mkDefault "Europe/London";
     i18n.defaultLocale = "en_US.UTF-8";
@@ -57,11 +64,14 @@ in {
       networks."10-${config.server_base.networkInterface}" = {
         matchConfig.Name = config.server_base.networkInterface;
 
-        address = lib.mkIf (!config.server_base.useDHCP)
-          [ (networkConfig.ip + "/" + toString networkConfig.prefixLength) ];
-        routes = lib.mkIf (!config.server_base.useDHCP) [{
-          Gateway = networkConfig.gateway;
-        }];
+        address = lib.mkIf (!config.server_base.useDHCP) [
+          (networkConfig.ip + "/" + toString networkConfig.prefixLength)
+        ];
+        routes = lib.mkIf (!config.server_base.useDHCP) [
+          {
+            Gateway = networkConfig.gateway;
+          }
+        ];
 
         DHCP = lib.mkIf config.server_base.useDHCP "yes";
         dhcpV4Config = lib.mkIf config.server_base.useDHCP { UseDNS = true; };
@@ -80,14 +90,25 @@ in {
 
     nix = {
       optimise.automatic = true;
-      settings.experimental-features = [ "nix-command" "flakes" ];
+      settings.experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       gc = {
         automatic = true;
         dates = "daily";
         options = "--delete-older-than 3d";
       };
     };
-    environment.systemPackages = with pkgs; [ neovim htop git traceroute dig iftop wireguard-tools];
+    environment.systemPackages = with pkgs; [
+      neovim
+      htop
+      git
+      traceroute
+      dig
+      iftop
+      wireguard-tools
+    ];
 
     programs.zsh.enable = true;
 
@@ -97,11 +118,13 @@ in {
       priority = 10;
     };
 
-    swapDevices = [{
-      device = "/var/lib/swapfile";
-      size = lib.mkDefault (3 * 512); # 1.5GB
-      priority = 5;
-    }];
+    swapDevices = [
+      {
+        device = "/var/lib/swapfile";
+        size = lib.mkDefault (3 * 512); # 1.5GB
+        priority = 5;
+      }
+    ];
 
     systemd.oomd.enable = false;
     services.earlyoom = {
@@ -127,6 +150,6 @@ in {
       useRoutingFeatures = "server";
     };
 
-    system.stateVersion = "25.11";
+    system.stateVersion = "26.05";
   };
 }

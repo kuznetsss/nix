@@ -1,4 +1,5 @@
-{ agenix, private, ... }: {
+{ agenix, private, ... }:
+{
   imports = [ agenix.nixosModules.default ];
   age.secrets = {
     "ivan/wg3_private_key" = {

@@ -1,4 +1,5 @@
-{ config, ... }: {
+{ config, ... }:
+{
   programs.wezterm = {
     enable = true; # use from brew instead
     enableZshIntegration = false;

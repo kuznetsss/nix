@@ -1,4 +1,5 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, ... }:
+{
   services.tlp = {
     enable = true;
     settings = {
@@ -43,11 +44,14 @@
     "intel_idle.max_cstate=10" # Explicitly allow C10
     "vt.global_cursor_default=0" # Stop cursor wakeups
   ];
-  environment.systemPackages = with pkgs; [ powertop pciutils powerstat];
+  environment.systemPackages = with pkgs; [
+    powertop
+    pciutils
+    powerstat
+  ];
 
   boot.kernelModules = [ "r8125" ];
-  boot.blacklistedKernelModules =
-    [ "r8169" ]; # Stop the default driver from loading
+  boot.blacklistedKernelModules = [ "r8169" ]; # Stop the default driver from loading
   boot.extraModulePackages = with config.boot.kernelPackages; [ r8125 ];
 
   # Pass the 'aspm=1' flag to the r8125 driver to force power savings

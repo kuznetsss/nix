@@ -1,6 +1,9 @@
 { nixpkgs }:
-let forEachSystem = (import ./util { inherit nixpkgs; }).forEachSystem;
-in forEachSystem (system:
+let
+  forEachSystem = (import ./util { inherit nixpkgs; }).forEachSystem;
+in
+forEachSystem (
+  system:
   let
     pkgs = nixpkgs.legacyPackages.${system};
     deployScript = pkgs.writeShellScript "deploy" ''
@@ -23,13 +26,17 @@ in forEachSystem (system:
         --flake ".#$HOST" \
         --target-host "$HOST" \
         --build-host "$HOST" \
+        --use-substitutes \
+        --option http-connections 50 \
         --sudo \
         --ask-sudo-password
     '';
-  in {
+  in
+  {
     deploy = {
       type = "app";
       program = "${deployScript}";
       meta.description = "Push the current configuration to the host";
     };
-  })
+  }
+)

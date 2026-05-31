@@ -1,4 +1,11 @@
-{ config, pkgs, lib, agenix, private, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  agenix,
+  private,
+  ...
+}:
 let
   sendTg = pkgs.writeShellScript "send-tg" ''
     TG_BOT_TOKEN=$(cat ${config.age.secrets."tg_bot_key".path})
@@ -26,7 +33,8 @@ let
     echo "Failed to send Telegram message after $MAX_RETRIES attempts" >&2
     exit 1
   '';
-in {
+in
+{
   imports = [ agenix.nixosModules.default ];
 
   options.server_base.telegram-notify = {

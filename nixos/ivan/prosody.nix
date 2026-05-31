@@ -86,6 +86,7 @@ in
       withCommunityModules = [
         "log_auth"
         "csi_battery_saver"
+        "muc_notifications"
         "sasl_ssdp"
         "sasl2"
         "sasl2_bind2"
