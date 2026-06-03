@@ -45,6 +45,7 @@ in
       let
         before = lib.mkBefore ''
           [[ ! $(command -v nix) && -e "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]] && source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+          ${lib.optionalString stdenv.isDarwin "eval $(/opt/homebrew/bin/brew shellenv)"}
         '';
         after = lib.mkAfter ''
           export KEYTIMEOUT=1
