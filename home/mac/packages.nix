@@ -10,6 +10,7 @@
     cargo-generate
     cargo-binutils
     rustup
+    lldb
 
     deploy-rs
 

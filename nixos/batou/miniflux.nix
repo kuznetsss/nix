@@ -22,7 +22,11 @@ in
   };
   services.miniflux = {
     enable = true;
-    config.LISTEN_ADDR = "0.0.0.0:51234";
+    config = {
+      LISTEN_ADDR = "0.0.0.0:51234";
+      POLLING_PARSING_ERROR_LIMIT = 0;
+      POLLING_FREQUENCY = 30;
+    };
     adminCredentialsFile = config.age.secrets."batou/miniflux_admin".path;
   };
   systemd.services.miniflux.serviceConfig.SupplementaryGroups = [ "miniflux-secrets" ];
