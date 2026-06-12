@@ -10,7 +10,7 @@
     sshfs
     fuse
 
-    # conan
+    conan
     llvmPackages_20.clang-tools
     lldb
     gcovr

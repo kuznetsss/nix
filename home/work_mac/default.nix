@@ -10,9 +10,9 @@ in
 home-manager.lib.homeManagerConfiguration {
   inherit pkgs;
   modules = [
-    {
+    rec {
       home.username = "skuznetsov";
-      home.homeDirectory = /Users/skuznetsov;
+      home.homeDirectory = "/Users/skuznetsov";
       home.stateVersion = "26.05";
       nixpkgs.config = {
         allowUnfree = true;
@@ -23,6 +23,18 @@ home-manager.lib.homeManagerConfiguration {
           enable = true;
           enableZshIntegration = true;
           nix-direnv.enable = true;
+        };
+        neovide = {
+          enable = true;
+          settings = {
+            font = {
+              normal = "JetBrainsMono Nerd Font";
+              size = 14;
+            };
+            neovim-bin = "${pkgs.neovim}/bin/nvim";
+            chdir = "${home.homeDirectory}/Documents";
+            srgb = true;
+          };
         };
       };
     }
