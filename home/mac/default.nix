@@ -24,6 +24,7 @@ home-manager.lib.homeManagerConfiguration {
     ./../common/jujutsu.nix
     ./../common/wezterm.nix
     ./../common/zsh.nix
+    ./../common/neovide.nix
     ./../common/packages.nix
     ./packages.nix
   ];

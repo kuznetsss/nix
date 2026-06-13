@@ -10,7 +10,7 @@ in
 home-manager.lib.homeManagerConfiguration {
   inherit pkgs;
   modules = [
-    rec {
+    {
       home.username = "skuznetsov";
       home.homeDirectory = "/Users/skuznetsov";
       home.stateVersion = "26.05";
@@ -24,18 +24,6 @@ home-manager.lib.homeManagerConfiguration {
           enableZshIntegration = true;
           nix-direnv.enable = true;
         };
-        neovide = {
-          enable = true;
-          settings = {
-            font = {
-              normal = "JetBrainsMono Nerd Font";
-              size = 14;
-            };
-            neovim-bin = "${pkgs.neovim}/bin/nvim";
-            chdir = "${home.homeDirectory}/Documents";
-            srgb = true;
-          };
-        };
       };
     }
     ./../common/diff_on_activation.nix
@@ -44,6 +32,7 @@ home-manager.lib.homeManagerConfiguration {
     ./../common/zsh.nix
     ./../common/packages.nix
     ./../common/jujutsu.nix
+    ./../common/neovide.nix
     ./packages.nix
   ];
 }
