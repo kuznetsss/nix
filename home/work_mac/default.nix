@@ -32,7 +32,7 @@ home-manager.lib.homeManagerConfiguration {
     ./../common/zsh.nix
     ./../common/packages.nix
     ./../common/jujutsu.nix
-    ./../common/neovide.nix
+    # ./../common/neovide.nix
     ./packages.nix
   ];
 }
