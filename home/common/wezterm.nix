@@ -183,7 +183,15 @@
             name = 'unix',
             local_echo_threshold_ms = 1000,
           },
-        }
+        },
+        ssh_domains = {
+          {
+            name = "devserver",
+            remote_address = 'devserver',
+            remote_wezterm_path = '/home/skuznetsov/.nix-profile/bin/wezterm',
+            multiplexing = 'WezTerm',
+          },
+        },
       }
     '';
   };

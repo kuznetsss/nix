@@ -67,45 +67,123 @@ in
       ];
   };
 
-  programs.starship =
-    let
-      addStarshipJJ = pkgs ? starship-jj;
-    in
-    lib.mkMerge [
-      {
-        enable = true;
-        enableZshIntegration = true;
-        settings = {
-          character = {
-            success_symbol = "[➜](bold green)";
-            error_symbol = "[✖ ➜](bold red)";
-            vimcmd_symbol = "[](bold green)";
-          };
-          directory = {
-            truncate_to_repo = false;
-          };
-        };
-      }
-      (lib.optionalAttrs addStarshipJJ {
-        extraPackages = [ pkgs.starship-jj ];
-        settings = {
-          custom = {
-            jj = {
-              command = "prompt";
-              format = "$output";
-              ignore_timeout = true;
-              shell = [
-                "starship-jj"
-                "--ignore-working-copy"
-                "starship"
-              ];
-              use_stdin = false;
-              when = true;
-            };
-          };
-        };
-      })
-    ];
+  programs.starship = {
+    enable = true;
+    enableZshIntegration = true;
+    settings = {
+      format = lib.concatStrings [
+        "$username"
+        "$hostname"
+        "$localip"
+        "$shlvl"
+        "$singularity"
+        "$kubernetes"
+        "$nats"
+        "$directory"
+        "$vcsh"
+        "$fossil_branch"
+        "$fossil_metrics"
+        "$vcs"
+        "$pijul_channel"
+        "$docker_context"
+        "$package"
+        "$bun"
+        "$c"
+        "$cmake"
+        "$cobol"
+        "$cpp"
+        "$daml"
+        "$dart"
+        "$deno"
+        "$dotnet"
+        "$elixir"
+        "$elm"
+        "$erlang"
+        "$fennel"
+        "$fortran"
+        "$gleam"
+        "$golang"
+        "$gradle"
+        "$haskell"
+        "$haxe"
+        "$helm"
+        "$java"
+        "$julia"
+        "$kotlin"
+        "$lua"
+        "$maven"
+        "$mojo"
+        "$nim"
+        "$nodejs"
+        "$ocaml"
+        "$odin"
+        "$opa"
+        "$perl"
+        "$php"
+        "$pulumi"
+        "$purescript"
+        "$python"
+        "$quarto"
+        "$raku"
+        "$rlang"
+        "$red"
+        "$ruby"
+        "$rust"
+        "$scala"
+        "$solidity"
+        "$swift"
+        "$terraform"
+        "$typst"
+        "$vlang"
+        "$vagrant"
+        "$xmake"
+        "$zig"
+        "$buf"
+        "$guix_shell"
+        "$nix_shell"
+        "$conda"
+        "$pixi"
+        "$meson"
+        "$spack"
+        "$memory_usage"
+        "$aws"
+        "$gcloud"
+        "$openstack"
+        "$azure"
+        "$direnv"
+        "$env_var"
+        "$mise"
+        "$crystal"
+        "$custom"
+        "$sudo"
+        "$cmd_duration"
+        "$line_break"
+        "$jobs"
+        "$battery"
+        "$time"
+        "$status"
+        "$container"
+        "$netns"
+        "$os"
+        "$shell"
+        "$character"
+      ];
+      character = {
+        success_symbol = "[➜](bold green)";
+        error_symbol = "[✖ ➜](bold red)";
+        vimcmd_symbol = "[](bold green)";
+      };
+      directory = {
+        truncate_to_repo = false;
+      };
+      vcs = {
+        order = [
+          "jj"
+          "git"
+        ];
+      };
+    };
+  };
 
   programs.zoxide = {
     enable = true;

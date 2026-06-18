@@ -35,7 +35,9 @@
     yazi
 
     rustup
+    # corrosion
 
     websocat
+    mermaid-cli
   ];
 }
