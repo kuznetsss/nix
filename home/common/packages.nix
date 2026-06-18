@@ -54,7 +54,6 @@ in
       nmap
       wget
       openssh
-      tmux
       gnused
       unixtools.watch
       uutils-coreutils-noprefix
