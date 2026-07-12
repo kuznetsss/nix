@@ -62,8 +62,6 @@ in
       yazi
 
       nethack
-      spotify-player
-      spotifyd
     ]
     ++ (
       if pkgs.stdenv.isDarwin then
