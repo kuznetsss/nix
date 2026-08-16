@@ -20,6 +20,7 @@ home-manager.lib.homeManagerConfiguration {
       programs.home-manager.enable = true;
     }
     ./../common/diff_on_activation.nix
+    ./../common/direnv.nix
     ./../common/tmux.nix
     ./../common/jujutsu.nix
     ./../common/wezterm.nix

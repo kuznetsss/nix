@@ -19,14 +19,10 @@ home-manager.lib.homeManagerConfiguration {
       };
       programs = {
         home-manager.enable = true;
-        direnv = {
-          enable = true;
-          enableZshIntegration = true;
-          nix-direnv.enable = true;
-        };
       };
     }
     ./../common/diff_on_activation.nix
+    ./../common/direnv.nix
     ./../common/tmux.nix
     ./../common/wezterm.nix
     ./../common/zsh.nix
