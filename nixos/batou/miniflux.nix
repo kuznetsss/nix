@@ -25,7 +25,8 @@ in
     config = {
       LISTEN_ADDR = "0.0.0.0:51234";
       POLLING_PARSING_ERROR_LIMIT = 0;
-      POLLING_FREQUENCY = 30;
+      POLLING_FREQUENCY = 15;
+      SCHEDULER_ROUND_ROBIN_MIN_INTERVAL = 15;
     };
     adminCredentialsFile = config.age.secrets."batou/miniflux_admin".path;
   };
