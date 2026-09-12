@@ -1,10 +1,19 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  nixpkgs-unstable,
+  ...
+}:
 let
   networkInterface = config.server_base.networkInterface;
   webUIPort = 8096;
+  jellyfin_package = nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.jellyfin;
 in
 {
-  services.jellyfin.enable = true;
+  services.jellyfin = {
+    enable = true;
+    package = jellyfin_package;
+  };
 
   networking.firewall.interfaces.${networkInterface}.allowedTCPPorts = [ webUIPort ];
 

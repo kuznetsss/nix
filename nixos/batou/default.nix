@@ -1,5 +1,6 @@
 {
   nixpkgs,
+  nixpkgs-unstable,
   home-manager,
   private,
   disko,
@@ -10,7 +11,7 @@ let
   lib = nixpkgs.lib;
 in
 lib.nixosSystem {
-  specialArgs = { inherit private agenix; };
+  specialArgs = { inherit private agenix nixpkgs-unstable; };
   modules = [
     disko.nixosModules.disko
     ./disk-config.nix

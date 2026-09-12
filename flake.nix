@@ -48,6 +48,7 @@
 
       nixosConfigurations = import ./nixos {
         nixpkgs = nixpkgs-stable;
+        nixpkgs-unstable = nixpkgs;
         home-manager = home-manager-stable;
         inherit agenix private disko;
       };
