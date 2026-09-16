@@ -23,6 +23,7 @@ home-manager.lib.homeManagerConfiguration {
     }
     ./../common/diff_on_activation.nix
     ./../common/direnv.nix
+    ./../common/hammerspoon.nix
     ./../common/tmux.nix
     ./../common/wezterm.nix
     ./../common/zsh.nix
