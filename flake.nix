@@ -55,6 +55,6 @@
 
       formatter = util.forEachSystem (system: nixpkgs.legacyPackages.${system}.nixfmt);
 
-      apps = import ./apps.nix { inherit nixpkgs; };
+      apps = import ./apps.nix { inherit nixpkgs nixpkgs-stable; };
     };
 }
