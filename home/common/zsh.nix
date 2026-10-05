@@ -35,7 +35,7 @@ in
       KEYTIMEOUT = 1;
     };
     shellAliases = {
-      rm = lib.mkIf stdenv.isDarwin "trash";
+      rm = lib.mkIf stdenv.hostPlatform.isDarwin "trash";
       pre-commit = lib.mkIf (lib.elem pkgs.prek config.home.packages) "prek";
     };
     history = {
@@ -45,7 +45,7 @@ in
       let
         before = lib.mkBefore ''
           [[ ! $(command -v nix) && -e "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]] && source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
-          ${lib.optionalString stdenv.isDarwin "eval $(/opt/homebrew/bin/brew shellenv)"}
+          ${lib.optionalString stdenv.hostPlatform.isDarwin "eval $(/opt/homebrew/bin/brew shellenv)"}
         '';
         after = lib.mkAfter ''
           export KEYTIMEOUT=1

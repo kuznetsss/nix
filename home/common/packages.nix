@@ -63,7 +63,7 @@ in
       nethack
     ]
     ++ (
-      if pkgs.stdenv.isDarwin then
+      if pkgs.stdenv.hostPlatform.isDarwin then
         [
           iproute2mac
           darwin.trash
