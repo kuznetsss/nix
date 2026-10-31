@@ -131,11 +131,11 @@
     "private-part": {
       "flake": false,
       "locked": {
-        "lastModified": 1768084710,
-        "narHash": "sha256-5Y2f6aNSZMqwdgwnAMeovsI7RTlHUAbjoU56GpFUbGM=",
+        "lastModified": 1793451819,
+        "narHash": "sha256-nppEO9UHDX3+IUHtsr0L5vWYtBmWpBMljf/RVcn2S6o=",
         "ref": "refs/heads/main",
-        "rev": "00b996f14fb520eb8f110928e9700296d62f8e7f",
-        "revCount": 19,
+        "rev": "7b34a8a46cf4c62d8fb86df4900fb211baa758b6",
+        "revCount": 20,
         "type": "git",
         "url": "ssh://git@github.com/kuznetsss/nix_private.git"
       },
